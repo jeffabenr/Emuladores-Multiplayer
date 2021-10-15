@@ -1,11 +1,11 @@
-# WPFChat
-A WPF chat application using TCP sockets.
+# Emuladores Multiplayer
+Um Emulador de bate-papo WPF usando soquetes TCP.
 
-Theme in the application is MahApps: http://mahapps.com/
+O tema do aplicativo é MahApps: http://mahapps.com/
 </br>
-Icons in the application are from: https://www.iconfinder.com
+Os ícones do aplicativo são de: https://www.iconfinder.com
 
-# Images
+# Imagens
 ![Server Application](https://imgur.com/1L7IrMW.png)
 </br>
 ![Client Application](https://imgur.com/qkZPu3I.png)
