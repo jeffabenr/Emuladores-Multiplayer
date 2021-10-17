@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ChatterClient.Properties {
+namespace EmuladoresMultiplayer.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ChatterClient.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ChatterClient.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EmuladoresMultiplayer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,66 @@ namespace ChatterClient.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] Atualizador {
+            get {
+                object obj = ResourceManager.GetObject("Atualizador", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap facebook {
+            get {
+                object obj = ResourceManager.GetObject("facebook", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap google {
+            get {
+                object obj = ResourceManager.GetObject("google", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] mednafen {
+            get {
+                object obj = ResourceManager.GetObject("mednafen", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] mednafen_server {
+            get {
+                object obj = ResourceManager.GetObject("mednafen_server", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] Updates {
+            get {
+                object obj = ResourceManager.GetObject("Updates", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

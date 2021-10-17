@@ -50,6 +50,13 @@ namespace ChatterClient
             set { OnPropertyChanged(ref _colorCode, value); }
         }
 
+        private string _emuladores;
+        public string Emuladores
+        {
+            get { return _emuladores; }
+            set { OnPropertyChanged(ref _emuladores, value); }
+        }
+
         public ICommand ConnectCommand { get; set; }
         public ICommand DisconnectCommand { get; set; }
         public ICommand SendCommand { get; set; }
@@ -64,7 +71,7 @@ namespace ChatterClient
         public MainWindowViewModel()
         {
             ChatRoom = new ChatroomViewModel();
-
+          
             ConnectCommand = new AsyncCommand(Connect, CanConnect);
             DisconnectCommand = new AsyncCommand(Disconnect, CanDisconnect);
             SendCommand = new AsyncCommand(Send, CanSend);
@@ -72,6 +79,7 @@ namespace ChatterClient
 
         private async Task Connect()
         {
+            
             ChatRoom = new ChatroomViewModel();
             string url = "emuladores-br.ddns.net";
             Port = "8000";
@@ -97,6 +105,7 @@ namespace ChatterClient
             }
 
             ChatRoom.Clear();
+         
             await Task.Run(() => ChatRoom.Connect(Username, url, socketPort));
         }
 
@@ -122,7 +131,7 @@ namespace ChatterClient
                 ColorCode = "green";
             else if (ColorCode == "Laranja")
                 ColorCode = "Orange";
-            else
+            else if (ColorCode == "Preto")
                 ColorCode = "Black";
 
 

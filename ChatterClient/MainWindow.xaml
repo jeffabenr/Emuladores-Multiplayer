@@ -33,29 +33,32 @@
         <StackPanel Grid.Column="0" Grid.Row="0"
                     Grid.ColumnSpan="1" Grid.RowSpan="2"
                     Background="WhiteSmoke">
-
+            <Grid Height="389">
+                <Label Content="Emuladores" Margin="0,10,0,203"/>
+                <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,37,5,0" Height="27" VerticalAlignment="Top">
+                    <ComboBoxItem Content="SUPER NINTENDO"/>
+                </ComboBox>
+                <Label Content="Jogo" Margin="0,64,0,111"/>
+                <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,89,5,0" Height="27" VerticalAlignment="Top">
+                    <ComboBoxItem Content="Super Bomberman 4"/>
+                </ComboBox>
+                <Label Content="Multitap na porta" Margin="0,120,0,93"/>
+                <RadioButton Content="1"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,152,0,0"/>
+                <RadioButton Content="2"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="40,152,0,0"/>
+                <RadioButton Content="Nenhum"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="80,152,0,0"/>
+                <Label Content="Servidor" Margin="0,177,0,0" Height="24" VerticalAlignment="Top"/>
+                <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,201,5,0" VerticalAlignment="Top">
+                    <ComboBoxItem Content="Público BR"/>
+                    <ComboBoxItem Content="Localhost(VPN)"/>
+                </ComboBox>
+                <Button Content="JOGAR" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="20,251,20,0"/>
+            </Grid>
             <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}"/>
-
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="2"
                     Grid.ColumnSpan="1"
-                    Background="WhiteSmoke" Margin="0,31,0,0">
-
-            <Label Content="Cor do nome de usuário" Height="27" Margin="0,10,0,0"/>
-            <ComboBox SelectedItem="{Binding ColorCode}" SelectedIndex="0" Height="27" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,5">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label Foreground="{Binding}" Content="{Binding}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-                <system:String>Preto</system:String>
-                <system:String>Vermelho</system:String>
-                <system:String>Azul</system:String>
-                <system:String>Verde</system:String>
-                <system:String>Laranja</system:String>
-            </ComboBox>
-        </StackPanel>
+                    Background="WhiteSmoke" Margin="0,31,0,0"/>
 
         <ContentControl Grid.Column="1" Grid.Row="0"
                    Grid.ColumnSpan="2" Grid.RowSpan="3" Margin="0,0,0,34">
@@ -93,10 +96,23 @@
 
         <DockPanel Grid.Column="1" Grid.Row="2"
                    Grid.ColumnSpan="2" Grid.RowSpan="1" Margin="0,63,0,0">
+            <ComboBox SelectedItem="{Binding ColorCode}" SelectedIndex="0" DockPanel.Dock="Left" Width="86" Height="27" Margin="5,0,0,0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Foreground="{Binding}" Content="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <system:String>Preto</system:String>
+                <system:String>Vermelho</system:String>
+                <system:String>Azul</system:String>
+                <system:String>Verde</system:String>
+                <system:String>Laranja</system:String>
+            </ComboBox>
             <TextBox Margin="5,5,0,5" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" 
                      AcceptsReturn="False" KeyDown="MessageBox_KeyDown"
-                     TextWrapping="Wrap" DockPanel.Dock="Left" Height="27" Width="355"/>
+                     TextWrapping="Wrap" DockPanel.Dock="Left" Height="27" Width="263"/>
             <Button Margin="5" Command="{Binding SendCommand}" Content="Enviar" Height="27" DockPanel.Dock="Right" HorizontalAlignment="Stretch"/>
+
         </DockPanel>
 
         <DockPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" Margin="0,0,5,5">
@@ -114,7 +130,7 @@
         </DockPanel>
         <DockPanel Grid.Row="0" Grid.RowSpan="3"
                    Margin="5,5,5,5"
-                    Background="#FFDEDEDE" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
+                     Background="#FFDEDEDE" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
 
             <StackPanel Height="246" Margin="200,100,200,100" Width="200">
                 <Label Content="Nome do usuário" HorizontalAlignment="Center"/>
@@ -123,6 +139,7 @@
                 <Button Command="{Binding ConnectCommand}" Content="Conectar" Margin="0,10,0,0"/>
             </StackPanel>
         </DockPanel>
+        <Label x:Name="versao" Content="00.00.00.00" HorizontalContentAlignment="Right" Grid.Column="3" Margin="119,0,5,214"/>
 
 
     </Grid>

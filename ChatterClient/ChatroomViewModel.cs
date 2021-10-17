@@ -23,7 +23,10 @@ namespace ChatterClient
             get { return _status; }
             set { OnPropertyChanged(ref _status, value); }
         }
-
+        public void teste()
+        {
+            Status = "Desconectado";
+        }
         private bool _isRunning = false;
         public bool IsRunning
         {
@@ -68,6 +71,7 @@ namespace ChatterClient
                 await _client.SendObject(connectionPacket);
                 _connectionTask = Task.Run(() => MonitorConnection());
                 Status = "Conectado";
+                
             }
             else
             {
