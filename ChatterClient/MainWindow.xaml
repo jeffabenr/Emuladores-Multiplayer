@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:ChatterClient.Converters"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Emuladores Multiplayer" Height="600" Width="800"  Background="WhiteSmoke" Icon="messenger-icon.ico" SizeToContent="Manual" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="MetroWindow_Closing">
+        Title="Emuladores Multiplayer" Height="600" Width="800"  Background="WhiteSmoke" Icon="messenger-icon.ico" SizeToContent="Manual" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded_1">
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
@@ -31,9 +31,9 @@
 
 
         <StackPanel Grid.Column="0" Grid.Row="0"
-                    Grid.ColumnSpan="1" Grid.RowSpan="2"
+                    Grid.ColumnSpan="1" Grid.RowSpan="3"
                     Background="WhiteSmoke">
-            <Grid Height="389">
+            <Grid Height="576">
                 <Label Content="Emuladores" Margin="0,10,0,203"/>
                 <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,37,5,0" Height="27" VerticalAlignment="Top">
                     <ComboBoxItem Content="SUPER NINTENDO"/>
@@ -43,17 +43,19 @@
                     <ComboBoxItem Content="Super Bomberman 4"/>
                 </ComboBox>
                 <Label Content="Multitap na porta" Margin="0,120,0,93"/>
-                <RadioButton Content="1"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,152,0,0"/>
-                <RadioButton Content="2"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="40,152,0,0"/>
-                <RadioButton Content="Nenhum"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="80,152,0,0"/>
+                <RadioButton Content="1"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,152,0,0"/>
+                <RadioButton Content="2"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="45,152,0,0"/>
+                <RadioButton IsChecked="True" Content="Nenhum"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="85,152,0,0"/>
                 <Label Content="Servidor" Margin="0,177,0,0" Height="24" VerticalAlignment="Top"/>
                 <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,201,5,0" VerticalAlignment="Top">
                     <ComboBoxItem Content="Público BR"/>
                     <ComboBoxItem Content="Localhost(VPN)"/>
                 </ComboBox>
                 <Button Content="JOGAR" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="20,251,20,0"/>
+
+                <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="30" VerticalContentAlignment="Bottom"/>
             </Grid>
-            <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}"/>
+
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="2"
@@ -128,18 +130,35 @@
                 </ListView.ItemTemplate>
             </ListView>
         </DockPanel>
+        <Label x:Name="versao" Content="00.00.00.00" HorizontalContentAlignment="Right"  HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="3" Margin="0,0,5,0"/>
         <DockPanel Grid.Row="0" Grid.RowSpan="3"
                    Margin="5,5,5,5"
-                     Background="#FFDEDEDE" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
+                     Background="#FF2E2929" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
 
-            <StackPanel Height="246" Margin="200,100,200,100" Width="200">
-                <Label Content="Nome do usuário" HorizontalAlignment="Center"/>
-                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
-                     IsEnabled="{Binding ChatRoom.IsRunning, Converter={StaticResource InverseConverter}}"/>
-                <Button Command="{Binding ConnectCommand}" Content="Conectar" Margin="0,10,0,0"/>
+            <StackPanel Height="246" Margin="200,100,200,100" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFDEDEDE">
+                <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Stretch" Height="246">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Label Content="Nome do usuário" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                     IsEnabled="{Binding ChatRoom.IsRunning, Converter={StaticResource InverseConverter}}" VerticalAlignment="Top" Margin="10,58,10,0"/>
+                        <Button Command="{Binding ConnectCommand}" Content="Conectar" Margin="50,94,50,0" VerticalAlignment="Top"/>
+                        <Label Content="OU" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,128,0,0" FontWeight="Bold"/>
+
+                        <Button Content=""  VerticalAlignment="Top" Margin="20,162,20,0"  BorderBrush="{x:Null}" Foreground="{x:Null}" >
+                            <Button.Background>
+                                <ImageBrush ImageSource="Resources/google.jpg" Stretch="UniformToFill" TileMode="None"/>
+                            </Button.Background>
+                        </Button>
+                        <Button Content=""  VerticalAlignment="Top" Margin="20,194,20,0" BorderBrush="{x:Null}" >
+                            <Button.Background>
+                                <ImageBrush ImageSource="/Resources/facebook.jpg" Stretch="UniformToFill"/>
+                            </Button.Background>
+                        </Button>
+                    </Grid>
+                </Border>
+
             </StackPanel>
         </DockPanel>
-        <Label x:Name="versao" Content="00.00.00.00" HorizontalContentAlignment="Right" Grid.Column="3" Margin="119,0,5,214"/>
 
 
     </Grid>
