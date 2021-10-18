@@ -5,18 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmuladoresMultiplayer"
         mc:Ignorable="d"
-        Title="Criar Partida" Height="276" Width="301" WindowStartupLocation="CenterScreen" SizeToContent="Height" ResizeMode="NoResize">
-    <Grid >
+        Title="Criar Partida" Height="331" Width="301" WindowStartupLocation="CenterScreen" SizeToContent="Height" ResizeMode="NoResize" Margin="0,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0" MinHeight="301">
+    <Grid  >
 
 
         <StackPanel 
-                    Background="WhiteSmoke" Margin="0,0,0,10">
-
+                    Background="WhiteSmoke">
+            <Label Content="Engine"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+            <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
+                <ComboBoxItem Content="Mednafem (Melhor Multiplayer)"/>
+                <ComboBoxItem Content="Retroarch (Maior quantidade de emuladores)"/>
+            </ComboBox>
             <Label Content="Emuladores"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="15,0,0,0"/>
             <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
                 <ComboBoxItem Content="SUPER NINTENDO"/>
             </ComboBox>
+            
             <Label Content="Jogo"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+            
             <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
                 <ComboBoxItem Content="Super Bomberman 4"/>
             </ComboBox>
@@ -29,13 +35,15 @@
             <Label Content="Servidor" Height="24" VerticalAlignment="Top" Margin="15,0,0,0"/>
 
             <ComboBox  SelectedIndex="0"  VerticalAlignment="Top" Margin="20,0,20,0">
+                <ComboBoxItem Content="Offline"/>
                 <ComboBoxItem Content="Público BR"/>
                 <ComboBoxItem Content="Localhost(VPN)"/>
             </ComboBox>
-            <Button Content="JOGAR" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" />
-
+            <Button Content="JOGAR" Command="{Binding SendPartida}" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" />
+            <StackPanel 
+                    Background="WhiteSmoke" Height="10"></StackPanel>
         </StackPanel>
-
+        
 
     </Grid>
 </Window>
