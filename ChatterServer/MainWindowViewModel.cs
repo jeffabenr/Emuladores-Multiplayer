@@ -120,14 +120,23 @@ namespace ChatterServer
 
         private async Task Stop()
         {
-            ExternalAddress = string.Empty;
-            _isRunning = false;
-            ClientsConnected = 0;
-            _server.Close();
+            try
+            {
+                ExternalAddress = string.Empty;
+                _isRunning = false;
+                ClientsConnected = 0;
+                _server.Close();
 
-            await _listenTask;
-            await _updateTask;
-            Status = "Parado";
+                await _listenTask;
+                await _updateTask;
+                Status = "Parado";
+            }
+            catch (Exception ex)
+            {
+                WriteOutput(ex.Message);
+                MessageBox.Show(ex.Message);
+            }
+           
         }
 
 
@@ -173,6 +182,12 @@ namespace ChatterServer
                     Message = "Um novo usuário entrou no chat",
                     UserColor = Colors.Purple.ToString()
                 };
+                var notification2 = new PartidasPacket
+                {
+                    Username = "Servidor",
+                    Jogo = "Super Bomberman 4",
+                    Emulador = "Super Nintendo"
+                };
 
                 if (Usernames.Keys.Contains(ucp.UserGuid))
                     Usernames.Remove(ucp.UserGuid);
@@ -184,6 +199,7 @@ namespace ChatterServer
                 Task.Run(() => _server.SendObjectToClients(ucp)).Wait();
                 Thread.Sleep(500);
                 Task.Run(() => _server.SendObjectToClients(notification)).Wait();
+                Task.Run(() => _server.SendObjectToClients(notification2)).Wait();
             }
             WriteOutput("Pacote Pessoal Recebido");
         }

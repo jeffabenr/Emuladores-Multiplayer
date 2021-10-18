@@ -1,0 +1,41 @@
+﻿<Window x:Class="EmuladoresMultiplayer.ModalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EmuladoresMultiplayer"
+        mc:Ignorable="d"
+        Title="Criar Partida" Height="276" Width="301" WindowStartupLocation="CenterScreen" SizeToContent="Height" ResizeMode="NoResize">
+    <Grid >
+
+
+        <StackPanel 
+                    Background="WhiteSmoke" Margin="0,0,0,10">
+
+            <Label Content="Emuladores"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="15,0,0,0"/>
+            <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
+                <ComboBoxItem Content="SUPER NINTENDO"/>
+            </ComboBox>
+            <Label Content="Jogo"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+            <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
+                <ComboBoxItem Content="Super Bomberman 4"/>
+            </ComboBox>
+            <Label Content="Multitap na porta"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+            <Grid Height="19" Margin="20,0,0,0">
+                <RadioButton Content="1"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0"/>
+                <RadioButton Content="2"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="45,0,0,0"/>
+                <RadioButton IsChecked="True" Content="Nenhum"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="85,0,0,0"/>
+            </Grid>
+            <Label Content="Servidor" Height="24" VerticalAlignment="Top" Margin="15,0,0,0"/>
+
+            <ComboBox  SelectedIndex="0"  VerticalAlignment="Top" Margin="20,0,20,0">
+                <ComboBoxItem Content="Público BR"/>
+                <ComboBoxItem Content="Localhost(VPN)"/>
+            </ComboBox>
+            <Button Content="JOGAR" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" />
+
+        </StackPanel>
+
+
+    </Grid>
+</Window>

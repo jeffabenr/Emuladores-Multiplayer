@@ -43,6 +43,13 @@ namespace ChatterClient
             set { OnPropertyChanged(ref _message, value); }
         }
 
+        private string _partida;
+        public string Partida
+        {
+            get { return _partida; }
+            set { OnPropertyChanged(ref _partida, value); }
+        }
+
         private string _colorCode;
         public string ColorCode
         {
@@ -60,6 +67,7 @@ namespace ChatterClient
         public ICommand ConnectCommand { get; set; }
         public ICommand DisconnectCommand { get; set; }
         public ICommand SendCommand { get; set; }
+        public ICommand SendPartida { get; set; }
 
         private ChatroomViewModel _chatRoom;
         public ChatroomViewModel ChatRoom
@@ -75,13 +83,18 @@ namespace ChatterClient
             ConnectCommand = new AsyncCommand(Connect, CanConnect);
             DisconnectCommand = new AsyncCommand(Disconnect, CanDisconnect);
             SendCommand = new AsyncCommand(Send, CanSend);
+            SendPartida = new AsyncCommand(iniciarPartida, CanPartida);
         }
 
         private async Task Connect()
         {
-            
+            if (ChatRoom != null)
+                await ChatRoom.Disconnect();
+
+
             ChatRoom = new ChatroomViewModel();
-            string url = "emuladores-br.ddns.net";
+            string url = "127.0.0.1";
+            //string url = "emuladores-br.ddns.net";
             Port = "8000";
             int socketPort = 0;
             var validPort = int.TryParse(Port, out socketPort);
@@ -139,10 +152,25 @@ namespace ChatterClient
             await ChatRoom.Send(Username, Message, ColorCode);
             Message = string.Empty;
         }
+        private async Task iniciarPartida()
+        {
+            if (ChatRoom == null)
+                DisplayError("Você não está conectado a um servidor.");
+
+
+
+
+
+
+            //await ChatRoom.IniciarPartida(Username, Message, ColorCode);
+            await ChatRoom.IniciarPartida(Username, "Host: "+ Username+" - Super Bomberman 4 - Emulador:Super Nintendo - Jogadores: 1/5 - Sevidor: Público", "ColorCode");
+            Partida = string.Empty;
+        }
 
         private bool CanConnect() => !ChatRoom.IsRunning;
         private bool CanDisconnect() => ChatRoom.IsRunning;
         private bool CanSend() => !String.IsNullOrWhiteSpace(Message) && ChatRoom.IsRunning;
+        private bool CanPartida() =>  ChatRoom.IsRunning;
 
         private void DisplayError(string message) => 
             MessageBox.Show(message, "Uau aí!", MessageBoxButton.OK, MessageBoxImage.Error);

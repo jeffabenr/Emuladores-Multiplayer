@@ -15,6 +15,7 @@ namespace ChatterClient
     public class ChatroomViewModel : BaseViewModel
     {
         public ObservableCollection<ChatPacket> Messages { get; set; }
+        public ObservableCollection<PartidasPacket> Partidas { get; set; }
         public ObservableCollection<string> Users { get; set; }
 
         private string _status;
@@ -47,6 +48,7 @@ namespace ChatterClient
         public ChatroomViewModel()
         {
             Messages = new ObservableCollection<ChatPacket>();
+            Partidas = new ObservableCollection<PartidasPacket>();
             Users = new ObservableCollection<string>();
         }
 
@@ -144,6 +146,24 @@ namespace ChatterClient
             await _client.SendObject(cap);
         }
 
+        public async Task IniciarPartida(string username, string jogo, string emulador)
+        {
+            PartidasPacket cap2 = new PartidasPacket
+                      {
+                        Username = username,
+                      Jogo = jogo,
+                    Emulador = emulador
+              };
+           // ChatPacket cap = new ChatPacket
+            //{
+            //   Username = username,
+            //    Message = jogo,
+             //   UserColor = emulador
+           // };
+
+            await _client.SendObject(cap2);
+        }
+
         private async Task Update()
         {
             while (IsRunning)
@@ -204,7 +224,14 @@ namespace ChatterClient
                 if (packet is ChatPacket chatP)
                 {
                     Messages.Add(chatP);
+                   
                 }
+                if (packet is PartidasPacket playP)
+                {
+                    Partidas.Add(playP);
+
+                }
+
 
                 if (packet is UserConnectionPacket connectionP)
                 {
@@ -231,6 +258,7 @@ namespace ChatterClient
         public void Clear()
         {
             Messages.Clear();
+            Partidas.Clear();
             Users.Clear();
         }
     }

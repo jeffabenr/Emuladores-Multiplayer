@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using EmuladoresMultiplayer;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -59,7 +60,7 @@ namespace ChatterClient
             InitializeComponent();
              needsUpdate = IsBeta;
             versao.Content = Assembly.GetEntryAssembly().GetName().Version.ToString();
-            ((INotifyCollectionChanged)chatList.Items).CollectionChanged
+            ((INotifyCollectionChanged)chatList2.Items).CollectionChanged
                 += Messages_CollectionChanged;
         }
         private void CheckifUpdateRequired()
@@ -90,7 +91,7 @@ namespace ChatterClient
 
             if (e.NewItems.Count > 0)
             {
-                chatList.ScrollIntoView(chatList.Items[chatList.Items.Count - 1]);
+                chatList2.ScrollIntoView(chatList2.Items[chatList2.Items.Count - 1]);
             }
         }
 
@@ -424,17 +425,7 @@ namespace ChatterClient
             return false;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ProcessStartInfo MednafenInfo = new ProcessStartInfo();
-            MednafenInfo.FileName = NullDCPath + @"\mednafen\mednafen.exe";
-            string GameKey = " -netplay.gamekey \"\"";
-            MednafenInfo.Arguments = " -connect -netplay.host " + "\"emuladores-br.ddns.net\"" + GameKey + " -netplay.nick \"Abner" + "\" ";
-            MednafenInfo.Arguments += "\"" + NullDCPath + @"\jogos\snes\Super Bomberman 4 (Japan).sfc" + "\"";
-            Console.WriteLine("Comando: " + MednafenInfo.Arguments);
-            MednafenInstance = Process.Start(MednafenInfo);
-            MednafenInstance.EnableRaisingEvents = true;
-        }
+        
 
         void CriarPasta(string diretorio)
         {
@@ -1031,9 +1022,26 @@ namespace ChatterClient
             }
         }
 
-        private void MetroWindow_Loaded_1(object sender, RoutedEventArgs e)
+       
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
 
+            if(nome.Text != "")
+            status.Content = "Conectando";
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            ModalWindow modalWindow = new ModalWindow();
+            modalWindow.ShowDialog();
+        }
+
+        private void MetroWindow_Closed(object sender, EventArgs e)
+        {
+            var context = (MainWindowViewModel)DataContext;
+            context.DisconnectCommand.Execute(null);
+           
         }
     }
 }

@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:ChatterClient.Converters"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Emuladores Multiplayer" Height="600" Width="800"  Background="WhiteSmoke" Icon="messenger-icon.ico" SizeToContent="Manual" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded_1">
+        Title="Emuladores Multiplayer" Height="600" Width="800"  Background="WhiteSmoke" Icon="messenger-icon.ico" SizeToContent="Manual" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" Closed="MetroWindow_Closed">
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
@@ -30,50 +30,39 @@
         </Grid.RowDefinitions>
 
 
-        <StackPanel Grid.Column="0" Grid.Row="0"
-                    Grid.ColumnSpan="1" Grid.RowSpan="3"
-                    Background="WhiteSmoke">
-            <Grid Height="576">
-                <Label Content="Emuladores" Margin="0,10,0,203"/>
-                <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,37,5,0" Height="27" VerticalAlignment="Top">
-                    <ComboBoxItem Content="SUPER NINTENDO"/>
-                </ComboBox>
-                <Label Content="Jogo" Margin="0,64,0,111"/>
-                <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,89,5,0" Height="27" VerticalAlignment="Top">
-                    <ComboBoxItem Content="Super Bomberman 4"/>
-                </ComboBox>
-                <Label Content="Multitap na porta" Margin="0,120,0,93"/>
-                <RadioButton Content="1"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,152,0,0"/>
-                <RadioButton Content="2"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="45,152,0,0"/>
-                <RadioButton IsChecked="True" Content="Nenhum"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="85,152,0,0"/>
-                <Label Content="Servidor" Margin="0,177,0,0" Height="24" VerticalAlignment="Top"/>
-                <ComboBox SelectedItem="{Binding Emuladores}" SelectedIndex="0" Margin="5,201,5,0" VerticalAlignment="Top">
-                    <ComboBoxItem Content="Público BR"/>
-                    <ComboBoxItem Content="Localhost(VPN)"/>
-                </ComboBox>
-                <Button Content="JOGAR" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="20,251,20,0"/>
+        <Label DockPanel.Dock="Top" Content="Partidas Multiplayer" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
 
-                <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="30" VerticalContentAlignment="Bottom"/>
-            </Grid>
+        <ContentControl Grid.Column="1"
+                   Grid.ColumnSpan="3" Height="240" VerticalAlignment="Center" Margin="0,0,158,0">
+            <ListView ItemsSource="{Binding ChatRoom.Partidas}" DockPanel.Dock="Bottom" Margin="10,24,10,5" BorderThickness="0,0,0,0" Grid.Column="1" Grid.ColumnSpan="2" FontSize="10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="10" Height="10" Fill="#FF00FF51" Margin="2"/>
+                            <TextBlock Text="{Binding Jogo}" Margin="2"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-        </StackPanel>
+        </ContentControl>
 
-        <StackPanel Grid.Column="0" Grid.Row="2"
-                    Grid.ColumnSpan="1"
-                    Background="WhiteSmoke" Margin="0,31,0,0"/>
+        <Button Content="Criar Partida"  FontSize="12" Grid.Column="1" Margin="202,10,106,0" Grid.ColumnSpan="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="1" Height="28" VerticalAlignment="Top" Click="Button_Click_2" />
+        <Button Content="Entrar na Partida" Command="{Binding SendPartida}" Height="28"  FontSize="12"  VerticalAlignment="Top" Grid.Column="2" Margin="116,10,169,0" Grid.Row="1" Grid.ColumnSpan="2" />
+        <Label DockPanel.Dock="Top" Content="Bate-Papo" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Margin="10,50,0,0" Grid.Row="1"/>
+        <ContentControl Grid.Column="1" Grid.Row="1"
+                   Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="0,43,163,34">
 
-        <ContentControl Grid.Column="1" Grid.Row="0"
-                   Grid.ColumnSpan="2" Grid.RowSpan="3" Margin="0,0,0,34">
-            <ListView x:Name="chatList" ItemsSource="{Binding ChatRoom.Messages}" Margin="5"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0,0,0,0">
+            <ListView x:Name="chatList2" Margin="5,31,5,5" ItemsSource="{Binding ChatRoom.Messages}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0,0,0,0">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
                                     <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding Content}"
-                                      ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                      ContentTemplate="{TemplateBinding ContentTemplate}" OpacityMask="{x:Null}"/>
+                                        ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}" OpacityMask="{x:Null}"/>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
@@ -94,11 +83,11 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-        </ContentControl>
 
+        </ContentControl>
         <DockPanel Grid.Column="1" Grid.Row="2"
-                   Grid.ColumnSpan="2" Grid.RowSpan="1" Margin="0,63,0,0">
-            <ComboBox SelectedItem="{Binding ColorCode}" SelectedIndex="0" DockPanel.Dock="Left" Width="86" Height="27" Margin="5,0,0,0">
+                   Grid.ColumnSpan="3" Grid.RowSpan="1" Margin="0,63,163,0">
+            <ComboBox SelectedItem="{Binding ColorCode}" SelectedIndex="0" DockPanel.Dock="Left" Width="91" Height="27" Margin="5,0,0,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <Label Foreground="{Binding}" Content="{Binding}"/>
@@ -112,12 +101,13 @@
             </ComboBox>
             <TextBox Margin="5,5,0,5" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" 
                      AcceptsReturn="False" KeyDown="MessageBox_KeyDown"
-                     TextWrapping="Wrap" DockPanel.Dock="Left" Height="27" Width="263"/>
+                     TextWrapping="Wrap" DockPanel.Dock="Left" Height="27" Width="290"/>
             <Button Margin="5" Command="{Binding SendCommand}" Content="Enviar" Height="27" DockPanel.Dock="Right" HorizontalAlignment="Stretch"/>
 
         </DockPanel>
 
-        <DockPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" Margin="0,0,5,5">
+        <DockPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" Margin="54,0,5,5">
+
             <Label DockPanel.Dock="Top" Content="Jogadores Online"/>
             <ListView ItemsSource="{Binding ChatRoom.Users}" DockPanel.Dock="Bottom" Margin="5,0,5,0" BorderThickness="0,0,0,0">
                 <ListView.ItemTemplate>
@@ -131,17 +121,26 @@
             </ListView>
         </DockPanel>
         <Label x:Name="versao" Content="00.00.00.00" HorizontalContentAlignment="Right"  HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="3" Margin="0,0,5,0"/>
+        <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}" VerticalContentAlignment="Bottom" Margin="0,70,0,0" Grid.Row="2" Height="30" VerticalAlignment="Top"/>
+        <StackPanel Grid.Column="0" Grid.Row="2"
+                    Grid.ColumnSpan="1"
+                    Background="WhiteSmoke" VerticalAlignment="Top" Height="30" Margin="0,70,0,0">
+
+            <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}" VerticalContentAlignment="Bottom" Margin="0,0,0,10" Height="28"/>
+
+
+        </StackPanel>
         <DockPanel Grid.Row="0" Grid.RowSpan="3"
-                   Margin="5,5,5,5"
+                   Margin="0,-5,10,15"
                      Background="#FF2E2929" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
 
             <StackPanel Height="246" Margin="200,100,200,100" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFDEDEDE">
                 <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Stretch" Height="246">
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Label Content="Nome do usuário" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBox x:Name="nome" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
                      IsEnabled="{Binding ChatRoom.IsRunning, Converter={StaticResource InverseConverter}}" VerticalAlignment="Top" Margin="10,58,10,0"/>
-                        <Button Command="{Binding ConnectCommand}" Content="Conectar" Margin="50,94,50,0" VerticalAlignment="Top"/>
+                        <Button Command="{Binding ConnectCommand}" Content="Conectar" Margin="50,94,50,0" VerticalAlignment="Top" Click="Button_Click_1"/>
                         <Label Content="OU" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,128,0,0" FontWeight="Bold"/>
 
                         <Button Content=""  VerticalAlignment="Top" Margin="20,162,20,0"  BorderBrush="{x:Null}" Foreground="{x:Null}" >
@@ -154,6 +153,7 @@
                                 <ImageBrush ImageSource="/Resources/facebook.jpg" Stretch="UniformToFill"/>
                             </Button.Background>
                         </Button>
+                        <Label x:Name="status" Content="Desconectado" ContentStringFormat="Status: {0}" VerticalAlignment="Top" Height="27" VerticalContentAlignment="Bottom" HorizontalAlignment="Left" Margin="5,0,0,0"/>
                     </Grid>
                 </Border>
 
