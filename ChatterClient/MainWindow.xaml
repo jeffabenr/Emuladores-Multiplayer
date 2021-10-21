@@ -30,20 +30,12 @@
         </Grid.RowDefinitions>
 
 
+
         <DockPanel Grid.RowSpan="3">
             <StackPanel Margin="5,0,5,0">
                 <Label DockPanel.Dock="Top" Content="Partida Atual" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Height="24" />
                 <ContentControl    Height="156" HorizontalAlignment="Stretch">
-                    <ListView  DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="10">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="10" Height="10" Fill="#FF00FF51" Margin="2"/>
-                                    <TextBlock  Margin="2"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <ListView x:Name="tayres"  DockPanel.Dock="Bottom" ItemsSource="{Binding ChatRoom.Partidas[0].Jogadores}" BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12"/>
 
                 </ContentControl>
             </StackPanel>
@@ -54,12 +46,13 @@
                 <Label DockPanel.Dock="Top" Content="Partidas Multiplayer" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Height="24" />
 
                 <ContentControl    Height="156" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                    <ListView ItemsSource="{Binding ChatRoom.Partidas}" DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="10">
+                    <ListView x:Name="lista_partidas" ItemsSource="{Binding ChatRoom.Partidas}" DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Ellipse Width="10" Height="10" Fill="#FF00FF51" Margin="2"/>
-                                    <TextBlock Text="{Binding Jogo}" Margin="2"/>
+                                    <TextBlock Text="{Binding Titulo}" Margin="2"/>
+
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -68,7 +61,7 @@
                 </ContentControl>
                 <Grid Margin="0,10,0,0">
                     <Button Content="Criar Partida"  FontSize="12" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="28" VerticalAlignment="Center" Click="Button_Click_2" Margin="163,0,155,0" Width="150" />
-                    <Button Content="Entrar na Partida" Command="{Binding SendPartida}" Height="28"  FontSize="12"  VerticalAlignment="Center" Margin="318,0,0,0" Width="150" />
+                    <Button Content="Entrar na Partida" Height="28"  FontSize="12"  VerticalAlignment="Center" Margin="318,0,0,0" Width="150" Click="Button_Click" />
                 </Grid>
 
                 <Label DockPanel.Dock="Top" Content="Bate-Papo" HorizontalAlignment="Stretch" VerticalAlignment="Top"  Height="24"/>
@@ -151,12 +144,53 @@
         <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}" VerticalContentAlignment="Bottom" Margin="0,70,0,0" Grid.Row="2" Height="30" VerticalAlignment="Top"/>
         <StackPanel Grid.Column="0" Grid.Row="2"
                     Grid.ColumnSpan="1"
-                    Background="WhiteSmoke" VerticalAlignment="Top" Height="30" Margin="0,70,0,0">
+                    Background="WhiteSmoke" VerticalAlignment="Stretch" Height="30" Margin="0,70,0,0">
 
             <Label Content="{Binding ChatRoom.Status}" ContentStringFormat="Status: {0}" VerticalContentAlignment="Bottom" Margin="0,0,0,10" Height="28"/>
 
 
         </StackPanel>
+        <Grid x:Name="criarPartida" Grid.ColumnSpan="4" Grid.RowSpan="3" Width="796" Visibility="Hidden">
+
+            <Rectangle Fill="#99000000" MouseDown="Rectangle_MouseDown" />
+            <StackPanel 
+                    Background="WhiteSmoke" Margin="274,142,274,114"    >
+                <Label Content="Engine"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+                <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0" IsEnabled="False">
+                    <ComboBoxItem Content="Mednafem (Melhor Multiplayer)"/>
+                    <ComboBoxItem Content="Retroarch (Maior quantidade de emuladores)"/>
+                </ComboBox>
+                <Label Content="Emuladores"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="15,0,0,0"/>
+                <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
+                    <ComboBoxItem Content="SUPER NINTENDO"/>
+                </ComboBox>
+
+                <Label Content="Jogo"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+
+                <ComboBox  SelectedIndex="0" Height="27" VerticalAlignment="Top" Margin="20,0,20,0">
+                    <ComboBoxItem Content="Super Bomberman 4"/>
+                </ComboBox>
+                <Label Content="Multitap na porta"  VerticalAlignment="Top" Margin="15,0,0,0"/>
+                <Grid Height="19" Margin="20,0,0,0">
+                    <RadioButton Content="1"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0" IsEnabled="False"/>
+                    <RadioButton Content="2"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="45,0,0,0" IsEnabled="False"/>
+                    <RadioButton IsChecked="True" Content="Nenhum"  GroupName="multitap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="85,0,0,0"/>
+                </Grid>
+                <Label Content="Servidor" Height="24" VerticalAlignment="Top" Margin="15,0,0,0"/>
+
+                <ComboBox  SelectedIndex="1"  VerticalAlignment="Top" Margin="20,0,20,0" IsEnabled="False">
+                    <ComboBoxItem Content="Offline"/>
+                    <ComboBoxItem Content="Público BR"/>
+                    <ComboBoxItem Content="Localhost(VPN)"/>
+                </ComboBox>
+                <Button Content="JOGAR Teste"  Height="27"  FontSize="12" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" Click="Button_Click_3" />
+
+                <Button Content="JOGAR" Command="{Binding SendPartida}" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" />
+                <StackPanel 
+                    Background="WhiteSmoke" Height="10"/>
+
+            </StackPanel>
+        </Grid>
         <DockPanel Grid.Row="0" Grid.RowSpan="3"
                    Margin="0,-5,10,15"
                      Background="#FF2E2929" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
@@ -186,6 +220,7 @@
 
             </StackPanel>
         </DockPanel>
+
 
 
     </Grid>

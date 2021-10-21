@@ -22,6 +22,13 @@ namespace ChatterClient
             set { OnPropertyChanged(ref _username, value); }
         }
 
+        private object[] _jogadores;
+        public object[] Jogadores
+        {
+            get { return _jogadores; }
+            set { OnPropertyChanged(ref _jogadores, value); }
+        }
+
         private string _address;
         public string Address
         {
@@ -116,6 +123,7 @@ namespace ChatterClient
                 DisplayError("Forneça um nome de usuário.");
                 return;
             }
+            
 
             ChatRoom.Clear();
          
@@ -134,9 +142,13 @@ namespace ChatterClient
         {
             if (ChatRoom == null)
                 DisplayError("Você não está conectado a um servidor.");
+            if (String.IsNullOrWhiteSpace(Message))
+            {
+                DisplayError("Forneça uma mensagem!");
+                return;
+            }
 
-            
-            if(ColorCode == "Vermelho")
+            if (ColorCode == "Vermelho")
                 ColorCode = "Red";
             else if (ColorCode == "Azul")
                 ColorCode = "Blue";
@@ -163,7 +175,10 @@ namespace ChatterClient
 
 
             //await ChatRoom.IniciarPartida(Username, Message, ColorCode);
-            await ChatRoom.IniciarPartida(Username, "Host: "+ Username+" - Super Bomberman 4 - Emulador:Super Nintendo - Jogadores: 1/5 - Sevidor: Público", "ColorCode");
+
+
+            // await ChatRoom.IniciarPartida(Username,"Super Bomberman 4","Super Nintendo","Público", "emuladores-br.ddns.net", "Mednafem");
+            await ChatRoom.IniciarPartida(Username, "Super Bomberman 4", "Super Nintendo", "emuladores-br.ddns.net","Público","Mednafem");
             Partida = string.Empty;
         }
 

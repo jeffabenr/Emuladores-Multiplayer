@@ -17,6 +17,7 @@ namespace ChatterClient
         public ObservableCollection<ChatPacket> Messages { get; set; }
         public ObservableCollection<PartidasPacket> Partidas { get; set; }
         public ObservableCollection<string> Users { get; set; }
+      
 
         private string _status;
         public string Status
@@ -24,10 +25,7 @@ namespace ChatterClient
             get { return _status; }
             set { OnPropertyChanged(ref _status, value); }
         }
-        public void teste()
-        {
-            Status = "Desconectado";
-        }
+       
         private bool _isRunning = false;
         public bool IsRunning
         {
@@ -44,6 +42,7 @@ namespace ChatterClient
         private DateTime _pingSent;
         private DateTime _pingLastSent;
         private bool _pinged = false;
+        
 
         public ChatroomViewModel()
         {
@@ -129,7 +128,7 @@ namespace ChatterClient
                 {
                     Username = string.Empty,
                     Message = "Você se desconectou do servidor.",
-                    UserColor = "preto"
+                    UserColor = "black"
                 });
             });
         }
@@ -145,15 +144,31 @@ namespace ChatterClient
 
             await _client.SendObject(cap);
         }
-
-        public async Task IniciarPartida(string username, string jogo, string emulador)
+       
+        //public async Task IniciarPartida(string username, string jogo, string emulador,string servidor,string ip,string engine)
+        public async Task IniciarPartida(string username, string jogo, string emulador, string ip,string tipoServidor,string engine)
         {
+            string[] teste=new string[8];
+
+            teste.SetValue("abner",0);
+            
             PartidasPacket cap2 = new PartidasPacket
-                      {
-                        Username = username,
-                      Jogo = jogo,
-                    Emulador = emulador
-              };
+            {
+
+                Username = username,
+                Jogo = jogo,
+                Emulador = emulador,
+                Ip = ip,
+                Jogadores = teste,
+                TipoServidor = tipoServidor,
+                Engine = engine,
+                Titulo = "Host:" + username + " Jogo:" + emulador +" Jogadores:"+ teste.Length + "/5  Servidor:"+tipoServidor+"  Engine:"+engine
+               
+
+            };
+                await _client.SendObject(cap2);
+            
+           
            // ChatPacket cap = new ChatPacket
             //{
             //   Username = username,
@@ -161,7 +176,7 @@ namespace ChatterClient
              //   UserColor = emulador
            // };
 
-            await _client.SendObject(cap2);
+          
         }
 
         private async Task Update()

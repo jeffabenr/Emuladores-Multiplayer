@@ -1,8 +1,10 @@
 ﻿using EmuladoresMultiplayer;
 using Microsoft.VisualBasic;
+using SimplePackets;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -1033,8 +1035,7 @@ namespace ChatterClient
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            ModalWindow modalWindow = new ModalWindow();
-            modalWindow.ShowDialog();
+            criarPartida.Visibility = Visibility.Visible;
         }
 
         private void MetroWindow_Closed(object sender, EventArgs e)
@@ -1042,6 +1043,149 @@ namespace ChatterClient
             var context = (MainWindowViewModel)DataContext;
             context.DisconnectCommand.Execute(null);
            
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (lista_partidas.HasItems && lista_partidas.SelectedIndex>=0) {
+             PartidasPacket drv = (PartidasPacket)lista_partidas.SelectedItem;
+           
+                if (drv.Engine== "Mednafem".Trim())
+                {
+                    if(drv.TipoServidor == "Público".Trim())
+                    {
+                        //MessageBox.Show("Engine:"+drv.Engine+ "Servidor:" + drv.TipoServidor + " IP:" + drv.Ip);
+                        await EntrarPartida(drv.Username, drv.Ip);
+                    }
+                }
+
+            }
+            
+        }
+
+        private async void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            await CriarPartida();
+        }
+        public async Task EntrarPartida(string nome, string host)
+        {
+            Process myProcess;
+
+
+            using (myProcess = new Process())
+            {
+                try
+                {
+                    // Start a process to print a file and raise an event when done.
+                    myProcess.StartInfo.FileName = NullDCPath + @"\mednafen\mednafen.exe";
+                    //myProcess.StartInfo.Verb = "Print";
+                    string GameKey = " -netplay.gamekey \"\"";
+                 
+
+
+                    myProcess.StartInfo.Arguments = " -connect -netplay.host " + host + GameKey + " -netplay.nick "+nome+" ";
+                    myProcess.StartInfo.Arguments += "\"" + NullDCPath + @"\jogos\snes\Super Bomberman 4 (Japan).sfc" + "\"";
+
+
+
+
+                    //Process correctionProcess = Process.Start(myProcess.StartInfo);
+                    //correctionProcess.EnableRaisingEvents = true;
+                    //correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
+
+                    var context2 = (MainWindowViewModel)DataContext;
+                    context2.ChatRoom.Partidas[0].Jogadores.SetValue("Abner2", 1);
+                   
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Emulador não encontrado! Erro:" + ex.Message);
+                }
+
+                // Wait for Exited event, but not more than 30 seconds.
+
+            }
+
+        }
+        public async Task CriarPartida()
+        {
+            Process myProcess;
+            
+
+            using (myProcess = new Process())
+            {
+                try
+                {
+                    // Start a process to print a file and raise an event when done.
+                    myProcess.StartInfo.FileName = NullDCPath + @"\mednafen\mednafen.exe";
+                    //myProcess.StartInfo.Verb = "Print";
+                    string GameKey = " -netplay.gamekey \"\"";
+                    //myProcess.Arguments = " -connect -netplay.host " + "\"emuladores-br.ddns.net\"" + GameKey + " -netplay.nick \"Abner" + "\" ";
+                    //myProcess.Arguments += "\"" + NullDCPath + @"\jogos\snes\Super Bomberman 4 (Japan).sfc" + "\"";
+                    //Console.WriteLine("Comando: " + MednafenInfo.Arguments);
+                   // myProcess.StartInfo.CreateNoWindow = true;
+                    //myProcess.EnableRaisingEvents = true;
+                    // myProcess.Exited += new EventHandler(MednafenInstance_Exited);
+                    
+                       
+                    myProcess.StartInfo.Arguments = " -connect -netplay.host " + "\"emuladores-br.ddns.net\"" + GameKey + " -netplay.nick \"Abner" + "\" ";
+                    myProcess.StartInfo.Arguments += "\"" + NullDCPath + @"\jogos\snes\Super Bomberman 4 (Japan).sfc" + "\"";
+
+
+
+                     
+                    //myProcess.Start();
+                  //  Process correctionProcess = Process.Start(myProcess.StartInfo);
+                   // correctionProcess.EnableRaisingEvents = true;
+                   // correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
+                    var context = (MainWindowViewModel)DataContext;
+                    context.SendPartida.Execute(null);
+                
+
+
+
+                    //var context2 = (PartidasPacket)context.ChatRoom.Partidas.GetEnumerator().Current;
+
+
+                    //ChatroomViewModel c = new ChatroomViewModel();
+
+                    //MessageBox.Show("Usuário:"+ drv.Username+ " Jogo:" + drv.Jogo + " Emulador:" + drv.Emulador + " Servidor:" + drv.TipoServidor + " Ip:" + drv.Ip + " Engine:" + drv.Engine);
+                    //MessageBox.Show("Usuário:" + drv.Username + " Jogo:" + drv.Jogo + " Emulador:" + drv.Emulador.Trim() + " IP:" + drv.Ip.Trim() + " Jogadores:" + drv.Jogadores[0].Trim());
+                    
+                    criarPartida.Visibility = Visibility.Hidden;
+                   
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Emulador não encontrado! Erro:" + ex.Message);
+                }
+
+                // Wait for Exited event, but not more than 30 seconds.
+              
+            }
+          
+        }
+
+        private void jogadores()
+        {
+            var context2 = (MainWindowViewModel)DataContext;
+            PartidasPacket drv = context2.ChatRoom.Partidas[0];
+
+            tayres.ItemsSource = drv.Jogadores;
+        }
+
+
+        private void MednafenInstance_Exited(object sender, System.EventArgs e)
+        {
+           // MessageBox.Show("Fechou");
+        }
+        
+            private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            criarPartida.Visibility = Visibility.Hidden;
         }
     }
 }

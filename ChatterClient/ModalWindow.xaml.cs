@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChatterClient;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -39,7 +40,7 @@ namespace EmuladoresMultiplayer
                 Console.WriteLine("Comando: " + MednafenInfo.Arguments);
                 MednafenInstance = Process.Start(MednafenInfo);
                 MednafenInstance.EnableRaisingEvents = true;
-                this.Close();
+                
             }
             catch (Exception ex)
             {
@@ -47,6 +48,12 @@ namespace EmuladoresMultiplayer
                 MessageBox.Show("Emulador não encontrado! Erro:" + ex.Message);
             }
 
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            
+;
         }
     }
 }

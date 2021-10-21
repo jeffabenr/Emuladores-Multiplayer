@@ -178,15 +178,25 @@ namespace ChatterServer
             {
                 var notification = new ChatPacket
                 {
+                    
                     Username = "Servidor",
-                    Message = "Um novo usuário entrou no chat",
+                    Message = "Um novo usuário:"+ ucp.Username + " entrou no chat",
                     UserColor = Colors.Purple.ToString()
                 };
+                string[] teste = new string[5];
+                teste[0] = "Abner";
                 var notification2 = new PartidasPacket
                 {
                     Username = "Servidor",
                     Jogo = "Super Bomberman 4",
-                    Emulador = "Super Nintendo"
+                    Emulador = "super NIntendo",
+                    Ip = "1",
+                    Jogadores = teste,
+                    Titulo ="",
+                    TipoServidor="",
+                    Engine=""
+
+
                 };
 
                 if (Usernames.Keys.Contains(ucp.UserGuid))
@@ -215,6 +225,7 @@ namespace ChatterServer
             {
                 return;
             }
+          
 
             var notification = new ChatPacket
             {
@@ -222,7 +233,6 @@ namespace ChatterServer
                 Message = "Um usuário saiu do chat",
                 UserColor = Colors.Purple.ToString()
             };
-
             var userPacket = new UserConnectionPacket
             {
                 UserGuid = e.Sender.ClientId.ToString(),
@@ -230,7 +240,7 @@ namespace ChatterServer
                 IsJoining = false
             };
 
-            if(Usernames.Keys.Contains(userPacket.UserGuid))
+            if (Usernames.Keys.Contains(userPacket.UserGuid))
                 Usernames.Remove(userPacket.UserGuid);
 
             userPacket.Users = Usernames.Values.ToArray();
