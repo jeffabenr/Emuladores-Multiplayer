@@ -1,4 +1,7 @@
-﻿using SimplePackets;
+﻿using EmuladoresMultiplayer;
+using Firebase.Database;
+using Firebase.Database.Query;
+using SimplePackets;
 using SimpleTcp;
 using System;
 using System.Collections.Generic;
@@ -15,6 +18,30 @@ namespace ChatterClient
 {
     public class MainWindowViewModel : BaseViewModel
     {
+        private ObservableCollection<Partida> _dbPartidas = new ObservableCollection<Partida>();
+        private readonly FirebaseClient _fbClient = new FirebaseClient("https://emuladoresbr-94d9d-default-rtdb.firebaseio.com/");
+
+        public ObservableCollection<Partida> DbPartidas
+        {
+            get { return _dbPartidas; }
+            set
+            {
+                if (value != _dbPartidas)
+                {
+                    _dbPartidas = value;
+                    OnPropertyChanged("DbPartidas");
+                }
+            }
+        }
+
+
+
+        public FirebaseClient FBClient
+        {
+            get { return _fbClient; }
+        }
+
+
         private string _username;
         public string Username
         {
@@ -86,6 +113,7 @@ namespace ChatterClient
 
         public MainWindowViewModel()
         {
+            Task.Run(() => GetPartidas());
             ChatRoom = new ChatroomViewModel();
           
             ConnectCommand = new AsyncCommand(Connect, CanConnect);
@@ -94,7 +122,34 @@ namespace ChatterClient
             SendPartida = new AsyncCommand(iniciarPartida, CanPartida);
             ApagarPartida = new AsyncCommand(apagarPartida, CanPartida);
         }
+        public async void GetPartidas()
+        {
+            var temp = await FBClient
+                .Child("Partidas")
+                .OrderByKey()
+                .OnceAsync<Partida>();
 
+            await App.Current.Dispatcher.BeginInvoke((Action)delegate () { DbPartidas.Clear(); });
+
+            foreach (var e in temp)
+            {
+                await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                {
+                    DbPartidas.Add(new Partida { Key = e.Key, Nome = e.Object.Nome, Jogo = e.Object.Jogo, Titulo = e.Object.Titulo, Engine = e.Object.Engine, TipoServidor = e.Object.TipoServidor, Ip = e.Object.Ip });
+                });
+            }
+
+            //await App.Current.Dispatcher.BeginInvoke((Action)delegate () { StrCollection.Clear(); });
+
+            //foreach (var e in temp)
+            //{
+            //    await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+            //     {
+            //         StrCollection.Add(e.Object.Name);
+            //     });
+            //}
+
+        }
         private async Task Connect()
         {
             if (ChatRoom != null)

@@ -46,14 +46,11 @@
                 <Label DockPanel.Dock="Top" Content="Partidas Multiplayer" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Height="24" />
 
                 <ContentControl    Height="156" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                    <ListView x:Name="lista_partidas" ItemsSource="{Binding ChatRoom.Partidas}" DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12">
+                    <ListView x:Name="lista_partidas"  d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}" 
+            ItemsSource="{Binding DbPartidas}" DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="10" Height="10" Fill="#FF00FF51" Margin="2"/>
-                                    <TextBlock Text="{Binding Titulo}" Margin="2"/>
-
-                                </StackPanel>
+                                <TextBlock Text="{Binding Titulo}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

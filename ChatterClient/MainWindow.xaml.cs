@@ -1069,7 +1069,9 @@ namespace ChatterClient
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            criarPartida.Visibility = Visibility.Visible;
+
+            //criarPartida.Visibility = Visibility.Visible;
+            AdicionarPartida();
         }
 
         private void MetroWindow_Closed(object sender, EventArgs e)
@@ -1082,14 +1084,22 @@ namespace ChatterClient
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (lista_partidas.HasItems && lista_partidas.SelectedIndex>=0) {
-             PartidasPacket drv = (PartidasPacket)lista_partidas.SelectedItem;
            
-                if (drv.Engine== "Mednafem".Trim())
+                
+                
+                Partida partida = (Partida)lista_partidas.SelectedItem;
+
+
+
+                // PartidasPacket drv = (PartidasPacket)lista_partidas.SelectedItem;
+                //MessageBox.Show(partida.Engine);
+                if (partida.Engine== "Mednafem".Trim())
                 {
-                    if(drv.TipoServidor == "Público".Trim())
-                    {
+                    
+                    if (partida.TipoServidor == "Público".Trim())
+                  {
                         //MessageBox.Show("Engine:"+drv.Engine+ "Servidor:" + drv.TipoServidor + " IP:" + drv.Ip);
-                        await EntrarPartida(drv.Username, drv.Ip);
+                        await EntrarPartida(partida.Nome, partida.Ip);
                     }
                 }
 
@@ -1123,15 +1133,15 @@ namespace ChatterClient
 
 
 
-                    //Process correctionProcess = Process.Start(myProcess.StartInfo);
-                    //correctionProcess.EnableRaisingEvents = true;
-                    //correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
+                    Process correctionProcess = Process.Start(myProcess.StartInfo);
+                    correctionProcess.EnableRaisingEvents = true;
+                    correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
 
                     // var context2 = (MainWindowViewModel)DataContext;
                     //context2.ChatRoom.Partidas[0].Jogadores.Append("abner2");
 
-                    var context = (MainWindowViewModel)DataContext;
-                    context.ApagarPartida.Execute(null);
+                   // var context = (MainWindowViewModel)DataContext;
+                   // context.ApagarPartida.Execute(null);
 
 
                 }
@@ -1275,6 +1285,39 @@ namespace ChatterClient
                 
 
             }
+        }
+
+        private async void AdicionarPartida()
+        {
+            
+
+               // var temp = await FBClient
+                  //  .Child("Partidas")
+                  //  .OrderByKey()
+                   // .OnceAsync<Partida>();
+
+            Partida partida = new Partida();
+
+
+            partida.Nome ="Abner";
+            partida.Jogo ="Super Bomberman 4";
+            partida.Emulador = "Super Nintendo";
+            partida.Engine = "Mednafem";
+            partida.TipoServidor = "Público";
+            partida.Ip = "emuladores-br.ddns.net";
+            partida.Titulo = "Host:" + partida.Nome + " Jogo:" + partida.Emulador + " Jogadores:" + 1 + "/5  Servidor:" + partida.TipoServidor + "  Engine:" + partida.Engine;
+
+            await FBClient
+                            .Child("Partidas")
+                            .PostAsync(partida, false);
+                       
+                   
+                
+
+
+
+
+            
         }
 
     }
