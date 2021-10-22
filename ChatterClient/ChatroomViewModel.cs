@@ -148,13 +148,13 @@ namespace ChatterClient
         //public async Task IniciarPartida(string username, string jogo, string emulador,string servidor,string ip,string engine)
         public async Task IniciarPartida(string username, string jogo, string emulador, string ip,string tipoServidor,string engine)
         {
-            string[] teste=new string[8];
+            string[] teste = new string[] {"abner"};
 
-            teste.SetValue("abner",0);
-            
+            //teste.SetValue("abner",0);
+
             PartidasPacket cap2 = new PartidasPacket
             {
-
+                
                 Username = username,
                 Jogo = jogo,
                 Emulador = emulador,
@@ -178,7 +178,12 @@ namespace ChatterClient
 
           
         }
+        public void ApagarPartida()
+        {
+            Partidas.RemoveAt(0);
+            Partidas.Clear();
 
+        }
         private async Task Update()
         {
             while (IsRunning)
@@ -275,6 +280,7 @@ namespace ChatterClient
             Messages.Clear();
             Partidas.Clear();
             Users.Clear();
+            
         }
     }
 }

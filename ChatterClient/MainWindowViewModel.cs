@@ -75,6 +75,7 @@ namespace ChatterClient
         public ICommand DisconnectCommand { get; set; }
         public ICommand SendCommand { get; set; }
         public ICommand SendPartida { get; set; }
+        public ICommand ApagarPartida { get; set; }
 
         private ChatroomViewModel _chatRoom;
         public ChatroomViewModel ChatRoom
@@ -91,6 +92,7 @@ namespace ChatterClient
             DisconnectCommand = new AsyncCommand(Disconnect, CanDisconnect);
             SendCommand = new AsyncCommand(Send, CanSend);
             SendPartida = new AsyncCommand(iniciarPartida, CanPartida);
+            ApagarPartida = new AsyncCommand(apagarPartida, CanPartida);
         }
 
         private async Task Connect()
@@ -179,7 +181,25 @@ namespace ChatterClient
 
             // await ChatRoom.IniciarPartida(Username,"Super Bomberman 4","Super Nintendo","Público", "emuladores-br.ddns.net", "Mednafem");
             await ChatRoom.IniciarPartida(Username, "Super Bomberman 4", "Super Nintendo", "emuladores-br.ddns.net","Público","Mednafem");
-            Partida = string.Empty;
+           // Partida = string.Empty;
+        }
+
+        private async Task apagarPartida()
+        {
+            if (ChatRoom == null)
+                DisplayError("Você não está conectado a um servidor.");
+
+
+
+
+
+
+            //await ChatRoom.IniciarPartida(Username, Message, ColorCode);
+
+
+            // await ChatRoom.IniciarPartida(Username,"Super Bomberman 4","Super Nintendo","Público", "emuladores-br.ddns.net", "Mednafem");
+            ChatRoom.ApagarPartida();
+           // Partida = string.Empty;
         }
 
         private bool CanConnect() => !ChatRoom.IsRunning;

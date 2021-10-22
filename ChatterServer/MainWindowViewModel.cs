@@ -249,6 +249,7 @@ namespace ChatterServer
             {
                 Task.Run(() => _server.SendObjectToClients(userPacket)).Wait();
                 Task.Run(() => _server.SendObjectToClients(notification)).Wait();
+               
             }
             WriteOutput("Cliente desconectado: " + e.Sender.Socket.RemoteEndPoint.ToString());
         }

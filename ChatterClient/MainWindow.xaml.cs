@@ -23,6 +23,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Firebase.Database;
+using Firebase.Database.Query;
 
 namespace ChatterClient
 {
@@ -1024,13 +1026,45 @@ namespace ChatterClient
             }
         }
 
-       
 
+        public async void GetJogadores()
+        {
+            var temp = await FBClient
+                .Child("Jogadores")
+                .OrderByKey()
+                .OnceAsync<Usuario>();
+
+            foreach (var e in temp)
+            {
+                string nome = e.Object.Nome;
+                string senha = e.Object.Senha;
+
+                if (login_nome.Text == nome && login_senha.Password == senha)
+                {
+
+                    //MessageBox.Show("Logado! "+nome + " " + senha);
+                    var context = (MainWindowViewModel)DataContext;
+                    context.ConnectCommand.Execute(null);
+
+                    //DisconnectCommand.Execute(null);
+                }
+                else
+                {
+                    MessageBox.Show("Jogador não encontrado!!!");
+                }
+            }
+
+        }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-
-            if(nome.Text != "")
-            status.Content = "Conectando";
+            if (string.IsNullOrEmpty(login_nome.Text) || string.IsNullOrEmpty(login_senha.Password))
+                MessageBox.Show("Coloque o nome e a senha!");
+            else
+            GetJogadores();
+            
+            // if(nome.Text != "")
+            // status.Content = "Conectando";
+            //MessageBox.Show("conectar");
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -1093,10 +1127,11 @@ namespace ChatterClient
                     //correctionProcess.EnableRaisingEvents = true;
                     //correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
 
-                    var context2 = (MainWindowViewModel)DataContext;
-                    context2.ChatRoom.Partidas[0].Jogadores.SetValue("Abner2", 1);
-                   
+                    // var context2 = (MainWindowViewModel)DataContext;
+                    //context2.ChatRoom.Partidas[0].Jogadores.Append("abner2");
 
+                    var context = (MainWindowViewModel)DataContext;
+                    context.ApagarPartida.Execute(null);
 
 
                 }
@@ -1187,5 +1222,60 @@ namespace ChatterClient
         {
             criarPartida.Visibility = Visibility.Hidden;
         }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            AdicionarJogador();
+           // MessageBox.Show("Cadastrar");
+        }
+        private readonly FirebaseClient _fbClient = new FirebaseClient("https://emuladoresbr-94d9d-default-rtdb.firebaseio.com/");
+        public FirebaseClient FBClient
+        {
+            get { return _fbClient; }
+        }
+
+        private async void AdicionarJogador()
+        {
+            if (string.IsNullOrEmpty(cadastrar_nome.Text) || string.IsNullOrEmpty(cadastrar_senha.Password))
+                MessageBox.Show("Coloque o nome e a senha!");
+            else
+            {
+
+                var temp = await FBClient
+                    .Child("Jogadores")
+                    .OrderByKey()
+                    .OnceAsync<Usuario>();
+
+                foreach (var e in temp)
+                {
+                    string nome = e.Object.Nome;
+                    //string senha = e.Object.Senha;
+
+                    if (cadastrar_nome.Text == nome )
+                    {
+
+                        MessageBox.Show("Jogador já cadastrado!!!");
+                    }
+                    else
+                    {
+                        Usuario usuario = new Usuario();
+
+
+                        usuario.Nome = cadastrar_nome.Text;
+                        usuario.Senha = cadastrar_senha.Password;
+
+                        await FBClient
+                            .Child("Jogadores")
+                            .PostAsync(usuario, false);
+                        MessageBox.Show("Jogador Cadastrado com Sucesso!");
+                    }
+                }
+
+
+                
+
+            }
+        }
+
     }
 }

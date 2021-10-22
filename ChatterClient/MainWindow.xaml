@@ -192,33 +192,55 @@
             </StackPanel>
         </Grid>
         <DockPanel Grid.Row="0" Grid.RowSpan="3"
-                   Margin="0,-5,10,15"
+                   Margin="6,5,4,5"
                      Background="#FF2E2929" Visibility="{Binding ChatRoom.IsRunning, Converter={StaticResource VisibilityConverter}}" Grid.ColumnSpan="4">
 
-            <StackPanel Height="246" Margin="200,100,200,100" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFDEDEDE">
-                <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Stretch" Height="246">
-                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Label Content="Nome do usuário" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" FontWeight="Bold"/>
-                        <TextBox x:Name="nome" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+            <Grid>
+                <StackPanel Height="271" Margin="140,0,0,0" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFDEDEDE">
+                    <Border BorderBrush="Black" BorderThickness="2" Height="271">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Label Content="Nome do usuário" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" FontWeight="Bold"/>
+                            <TextBox x:Name="login_nome" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
                      IsEnabled="{Binding ChatRoom.IsRunning, Converter={StaticResource InverseConverter}}" VerticalAlignment="Top" Margin="10,58,10,0"/>
-                        <Button Command="{Binding ConnectCommand}" Content="Conectar" Margin="50,94,50,0" VerticalAlignment="Top" Click="Button_Click_1"/>
-                        <Label Content="OU" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,128,0,0" FontWeight="Bold"/>
+                            <Button Content="Conectar" Margin="50,143,50,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+                            <Label Content="OU" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,168,0,0" FontWeight="Bold"/>
 
-                        <Button Content=""  VerticalAlignment="Top" Margin="20,162,20,0"  BorderBrush="{x:Null}" Foreground="{x:Null}" >
-                            <Button.Background>
-                                <ImageBrush ImageSource="Resources/google.jpg" Stretch="UniformToFill" TileMode="None"/>
-                            </Button.Background>
-                        </Button>
-                        <Button Content=""  VerticalAlignment="Top" Margin="20,194,20,0" BorderBrush="{x:Null}" >
-                            <Button.Background>
-                                <ImageBrush ImageSource="/Resources/facebook.jpg" Stretch="UniformToFill"/>
-                            </Button.Background>
-                        </Button>
-                        <Label x:Name="status" Content="Desconectado" ContentStringFormat="Status: {0}" VerticalAlignment="Top" Height="27" VerticalContentAlignment="Bottom" HorizontalAlignment="Left" Margin="5,0,0,0"/>
-                    </Grid>
-                </Border>
+                            <Button Content=""  VerticalAlignment="Top" Margin="20,197,20,0"  BorderBrush="{x:Null}" Foreground="{x:Null}" >
+                                <Button.Background>
+                                    <ImageBrush ImageSource="Resources/google.jpg" Stretch="UniformToFill" TileMode="None"/>
+                                </Button.Background>
+                            </Button>
+                            <Button Content=""  VerticalAlignment="Top" Margin="20,229,20,0" BorderBrush="{x:Null}" >
+                                <Button.Background>
+                                    <ImageBrush ImageSource="/Resources/facebook.jpg" Stretch="UniformToFill"/>
+                                </Button.Background>
+                            </Button>
+                            <Label x:Name="status" Content="Desconectado" ContentStringFormat="Status: {0}" VerticalAlignment="Top" Height="27" VerticalContentAlignment="Bottom" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                            <Label Content="Senha" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,84,0,0" FontWeight="Bold"/>
+                            <PasswordBox x:Name="login_senha" 
+                                VerticalAlignment="Top" Margin="10,110,10,0"/>
 
-            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                </StackPanel>
+                <StackPanel Height="184" Margin="454,150,0,0" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFDEDEDE">
+                    <Border BorderBrush="Black" BorderThickness="2" Height="184">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Label Content="Nome do usuário" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" FontWeight="Bold"/>
+                            <Label Content="Senha" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,87,0,0" FontWeight="Bold"/>
+                            <TextBox x:Name="cadastrar_nome" 
+                     IsEnabled="{Binding ChatRoom.IsRunning, Converter={StaticResource InverseConverter}}" VerticalAlignment="Top" Margin="10,58,10,0"/>
+                            <PasswordBox x:Name="cadastrar_senha" 
+                     IsEnabled="{Binding ChatRoom.IsRunning, Converter={StaticResource InverseConverter}}" VerticalAlignment="Top" Margin="10,112,10,0"/>
+                            <Button  Content="Cadastrar" Margin="50,147,50,0" VerticalAlignment="Top" Click="Button_Click_4"/>
+                            <Label x:Name="status2" Content="Desconectado" ContentStringFormat="Status: {0}" VerticalAlignment="Top" Height="27" VerticalContentAlignment="Bottom" HorizontalAlignment="Left" Margin="5,0,0,0"/>
+                        </Grid>
+                    </Border>
+
+                </StackPanel>
+            </Grid>
+
         </DockPanel>
 
 
