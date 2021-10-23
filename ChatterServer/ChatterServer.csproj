@@ -108,6 +108,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ChatterClient\ChatterClient.csproj">
+      <Project>{5ABE25EF-6C55-42BF-8E0E-85B2646C777B}</Project>
+      <Name>ChatterClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SimplePackets\SimplePackets.csproj">
       <Project>{02099d3b-edf4-4d4b-a70e-b381aba41cab}</Project>
       <Name>SimplePackets</Name>

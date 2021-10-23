@@ -18,24 +18,13 @@ namespace ChatterClient
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        private ObservableCollection<Partida> _dbPartidas = new ObservableCollection<Partida>();
+     
+     
         private readonly FirebaseClient _fbClient = new FirebaseClient("https://emuladoresbr-94d9d-default-rtdb.firebaseio.com/");
 
-        public ObservableCollection<Partida> DbPartidas
-        {
-            get { return _dbPartidas; }
-            set
-            {
-                if (value != _dbPartidas)
-                {
-                    _dbPartidas = value;
-                    OnPropertyChanged("DbPartidas");
-                }
-            }
-        }
+       
 
-
-
+      
         public FirebaseClient FBClient
         {
             get { return _fbClient; }
@@ -48,7 +37,19 @@ namespace ChatterClient
             get { return _username; }
             set { OnPropertyChanged(ref _username, value); }
         }
+        private string _key;
+        public string Key
+        {
+            get { return _key; }
+            set { OnPropertyChanged(ref _key, value); }
+        }
 
+        private string _partida_key;
+        public string Partida_Key
+        {
+            get { return _partida_key; }
+            set { OnPropertyChanged(ref _partida_key, value); }
+        }
         private object[] _jogadores;
         public object[] Jogadores
         {
@@ -103,6 +104,7 @@ namespace ChatterClient
         public ICommand SendCommand { get; set; }
         public ICommand SendPartida { get; set; }
         public ICommand ApagarPartida { get; set; }
+        public ICommand CriarPartida { get; set; }
 
         private ChatroomViewModel _chatRoom;
         public ChatroomViewModel ChatRoom
@@ -113,43 +115,19 @@ namespace ChatterClient
 
         public MainWindowViewModel()
         {
-            Task.Run(() => GetPartidas());
+           
             ChatRoom = new ChatroomViewModel();
           
             ConnectCommand = new AsyncCommand(Connect, CanConnect);
             DisconnectCommand = new AsyncCommand(Disconnect, CanDisconnect);
             SendCommand = new AsyncCommand(Send, CanSend);
             SendPartida = new AsyncCommand(iniciarPartida, CanPartida);
-            ApagarPartida = new AsyncCommand(apagarPartida, CanPartida);
+            ApagarPartida = new AsyncCommand(RemoverPartida, CanPartida);
+            CriarPartida = new AsyncCommand(criarPartida, CanPartida);
         }
-        public async void GetPartidas()
-        {
-            var temp = await FBClient
-                .Child("Partidas")
-                .OrderByKey()
-                .OnceAsync<Partida>();
+       
+       
 
-            await App.Current.Dispatcher.BeginInvoke((Action)delegate () { DbPartidas.Clear(); });
-
-            foreach (var e in temp)
-            {
-                await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
-                {
-                    DbPartidas.Add(new Partida { Key = e.Key, Nome = e.Object.Nome, Jogo = e.Object.Jogo, Titulo = e.Object.Titulo, Engine = e.Object.Engine, TipoServidor = e.Object.TipoServidor, Ip = e.Object.Ip });
-                });
-            }
-
-            //await App.Current.Dispatcher.BeginInvoke((Action)delegate () { StrCollection.Clear(); });
-
-            //foreach (var e in temp)
-            //{
-            //    await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
-            //     {
-            //         StrCollection.Add(e.Object.Name);
-            //     });
-            //}
-
-        }
         private async Task Connect()
         {
             if (ChatRoom != null)
@@ -185,6 +163,8 @@ namespace ChatterClient
             ChatRoom.Clear();
          
             await Task.Run(() => ChatRoom.Connect(Username, url, socketPort));
+            await Task.Run(() => ChatRoom.GetPartidas());
+            await Task.Run(() => ChatRoom.GetJogadores(Username));
         }
 
         private async Task Disconnect()
@@ -221,8 +201,27 @@ namespace ChatterClient
             await ChatRoom.Send(Username, Message, ColorCode);
             Message = string.Empty;
         }
+        private async Task criarPartida()
+        {
+            if (ChatRoom == null)
+                DisplayError("Você não está conectado a um servidor.");
+
+
+
+
+
+
+            //await ChatRoom.IniciarPartida(Username, Message, ColorCode);
+
+           await ChatRoom.GetPartidas();
+            await ChatRoom.GetJogadores(Username);
+            // await ChatRoom.IniciarPartida(Username,"Super Bomberman 4","Super Nintendo","Público", "emuladores-br.ddns.net", "Mednafem");
+            //await ChatRoom.IniciarPartida(Username, "Super Bomberman 4", "Super Nintendo", "emuladores-br.ddns.net", "Público", "Mednafem");
+            // Partida = string.Empty;
+        }
         private async Task iniciarPartida()
         {
+            
             if (ChatRoom == null)
                 DisplayError("Você não está conectado a um servidor.");
 
@@ -238,9 +237,9 @@ namespace ChatterClient
             await ChatRoom.IniciarPartida(Username, "Super Bomberman 4", "Super Nintendo", "emuladores-br.ddns.net","Público","Mednafem");
            // Partida = string.Empty;
         }
-
-        private async Task apagarPartida()
+        private async Task RemoverPartida()
         {
+           
             if (ChatRoom == null)
                 DisplayError("Você não está conectado a um servidor.");
 
@@ -253,9 +252,10 @@ namespace ChatterClient
 
 
             // await ChatRoom.IniciarPartida(Username,"Super Bomberman 4","Super Nintendo","Público", "emuladores-br.ddns.net", "Mednafem");
-            ChatRoom.ApagarPartida();
-           // Partida = string.Empty;
+            await ChatRoom.RemoverPartida(Username, "Super Bomberman 4", "Super Nintendo", "emuladores-br.ddns.net", "Público", "Mednafem");
+            // Partida = string.Empty;
         }
+
 
         private bool CanConnect() => !ChatRoom.IsRunning;
         private bool CanDisconnect() => ChatRoom.IsRunning;

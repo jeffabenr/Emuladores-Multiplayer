@@ -1,4 +1,5 @@
-﻿using SimplePackets;
+﻿using EmuladoresMultiplayer;
+using SimplePackets;
 using SimpleTcp;
 using System;
 using System.Collections.Generic;
@@ -183,18 +184,46 @@ namespace ChatterServer
                     Message = "Um novo usuário:"+ ucp.Username + " entrou no chat",
                     UserColor = Colors.Purple.ToString()
                 };
-                string[] teste = new string[5];
-                teste[0] = "Abner";
-                var notification2 = new PartidasPacket
+                string[][] Jogadores = new string[][] {
+                    new string[] {"Host", "Servidor" } };
+                var notification2 = new Partida
                 {
-                    Username = "Servidor",
+                    Nome = "Servidor",
                     Jogo = "Super Bomberman 4",
                     Emulador = "super NIntendo",
                     Ip = "1",
-                    Jogadores = teste,
+                    Jogadores = Jogadores,
                     Titulo ="",
                     TipoServidor="",
                     Engine=""
+
+
+                };
+                string[][] Jogadores2 = new string[][] {
+                    new string[] {"Host", "Servidor" } };
+                var notification3 = new PartidasPacket
+                {
+                    Nome = "Servidor",
+                    Jogo = "Super Bomberman 4",
+                    Emulador = "super NIntendo",
+                    Ip = "1",
+                    Jogadores = Jogadores2,
+                    Titulo = "",
+                    TipoServidor = "",
+                    Engine = ""
+
+
+                };
+                var notification4 = new Partida
+                {
+                    Nome = "Servidor",
+                    Jogo = "Super Bomberman 4",
+                    Emulador = "super NIntendo",
+                    Ip = "1",
+                    Jogadores = Jogadores,
+                    Titulo = "",
+                    TipoServidor = "",
+                    Engine = ""
 
 
                 };
@@ -210,6 +239,8 @@ namespace ChatterServer
                 Thread.Sleep(500);
                 Task.Run(() => _server.SendObjectToClients(notification)).Wait();
                 Task.Run(() => _server.SendObjectToClients(notification2)).Wait();
+                Task.Run(() => _server.SendObjectToClients(notification3)).Wait();
+                Task.Run(() => _server.SendObjectToClients(notification4)).Wait();
             }
             WriteOutput("Pacote Pessoal Recebido");
         }

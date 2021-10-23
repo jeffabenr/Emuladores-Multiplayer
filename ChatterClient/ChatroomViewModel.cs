@@ -1,4 +1,7 @@
-﻿using SimplePackets;
+﻿using EmuladoresMultiplayer;
+using Firebase.Database;
+using Firebase.Database.Query;
+using SimplePackets;
 using SimpleTcp;
 using System;
 using System.Collections.Generic;
@@ -14,10 +17,41 @@ namespace ChatterClient
 {
     public class ChatroomViewModel : BaseViewModel
     {
+        private readonly FirebaseClient _fbClient = new FirebaseClient("https://emuladoresbr-94d9d-default-rtdb.firebaseio.com/");
+        private ObservableCollection<Partida> _dbPartidas = new ObservableCollection<Partida>();
+        private ObservableCollection<string> _dbJogadores = new ObservableCollection<string>();
         public ObservableCollection<ChatPacket> Messages { get; set; }
         public ObservableCollection<PartidasPacket> Partidas { get; set; }
         public ObservableCollection<string> Users { get; set; }
-      
+        public ObservableCollection<Partida> DbPartidas
+        {
+            get { return _dbPartidas; }
+            set
+            {
+                if (value != _dbPartidas)
+                {
+                    _dbPartidas = value;
+                    OnPropertyChanged("DbPartidas");
+                }
+            }
+        }
+        public ObservableCollection<string> DbJogadores
+        {
+            get { return _dbJogadores; }
+            set
+            {
+                if (value != _dbJogadores)
+                {
+                    _dbJogadores = value;
+                    OnPropertyChanged("DbJogadores");
+                }
+            }
+        }
+
+        public FirebaseClient FBClient
+        {
+            get { return _fbClient; }
+        }
 
         private string _status;
         public string Status
@@ -144,25 +178,114 @@ namespace ChatterClient
 
             await _client.SendObject(cap);
         }
-       
+        public async         Task
+GetJogadores(string Username)
+        {
+
+            try
+            {
+
+
+                //if (DbUsers.Count>0) {
+                var temp = await FBClient
+                    .Child("Partidas")
+                    .OnceAsync<Partida>();
+
+                await App.Current.Dispatcher.BeginInvoke((Action)delegate () { DbJogadores.Clear(); });
+
+
+
+                foreach (var e in temp)
+                {
+
+                    // MessageBox.Show(e.Object.Jogadores[0][1] + " - "+ Username);
+
+                    if (e.Object.Jogadores[0][1] == Username)
+                    {
+                        await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                        {
+
+
+                            for (int i = 0; i < e.Object.Jogadores.Length; i++)
+                            {
+                                DbJogadores.Add(e.Object.Jogadores[i][0] + " - " + e.Object.Jogadores[i][1]);
+
+                            }
+
+
+
+
+
+                        });
+                    }
+                }
+
+                //await App.Current.Dispatcher.BeginInvoke((Action)delegate () { StrCollection.Clear(); });
+
+                //foreach (var e in temp)
+                //{
+                //    await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                //     {
+                //         StrCollection.Add(e.Object.Name);
+                //     });
+                //}
+                // }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async         Task
+GetPartidas()
+        {
+            var temp = await FBClient
+                .Child("Partidas")
+                .OrderByKey()
+                .OnceAsync<Partida>();
+
+            await App.Current.Dispatcher.BeginInvoke((Action)delegate () { DbPartidas.Clear(); });
+
+            foreach (var e in temp)
+            {
+                await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+                {
+                    DbPartidas.Add(new Partida { Key = e.Key, Nome = e.Object.Nome, Jogo = e.Object.Jogo, Titulo = e.Object.Titulo, Engine = e.Object.Engine, TipoServidor = e.Object.TipoServidor, Ip = e.Object.Ip });
+                });
+            }
+
+            //await App.Current.Dispatcher.BeginInvoke((Action)delegate () { StrCollection.Clear(); });
+
+            //foreach (var e in temp)
+            //{
+            //    await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
+            //     {
+            //         StrCollection.Add(e.Object.Name);
+            //     });
+            //}
+
+        }
+
         //public async Task IniciarPartida(string username, string jogo, string emulador,string servidor,string ip,string engine)
         public async Task IniciarPartida(string username, string jogo, string emulador, string ip,string tipoServidor,string engine)
         {
-            string[] teste = new string[] {"abner"};
+            string[][] Jogadores = new string[][] {
+                    new string[] {"Host", username } };
 
             //teste.SetValue("abner",0);
 
-            PartidasPacket cap2 = new PartidasPacket
+            Partida cap2 = new Partida
             {
                 
-                Username = username,
+                Nome = username,
                 Jogo = jogo,
                 Emulador = emulador,
                 Ip = ip,
-                Jogadores = teste,
+                Jogadores = Jogadores,
                 TipoServidor = tipoServidor,
                 Engine = engine,
-                Titulo = "Host:" + username + " Jogo:" + emulador +" Jogadores:"+ teste.Length + "/5  Servidor:"+tipoServidor+"  Engine:"+engine
+                Titulo = "Host:" + username + " Jogo:" + emulador +" Jogadores:"+ Jogadores.Length + "/5  Servidor:"+tipoServidor+"  Engine:"+engine
                
 
             };
@@ -178,12 +301,45 @@ namespace ChatterClient
 
           
         }
-        public void ApagarPartida()
+        public async Task RemoverPartida(string username, string jogo, string emulador, string ip, string tipoServidor, string engine)
         {
-            Partidas.RemoveAt(0);
-            Partidas.Clear();
+            string[][] Jogadores = new string[][] {
+                    new string[] {"Host", username } };
+
+            //teste.SetValue("abner",0);
+
+            RemoverPartida cap2 = new RemoverPartida
+            {
+
+                Nome = username,
+                Jogo = jogo,
+                Emulador = emulador,
+                Ip = ip,
+                Jogadores = Jogadores,
+                TipoServidor = tipoServidor,
+                Engine = engine,
+                Titulo = "Host:" + username + " Jogo:" + emulador + " Jogadores:" + Jogadores.Length + "/5  Servidor:" + tipoServidor + "  Engine:" + engine
+
+
+            };
+            await _client.SendObject(cap2);
+
+
+            // ChatPacket cap = new ChatPacket
+            //{
+            //   Username = username,
+            //    Message = jogo,
+            //   UserColor = emulador
+            // };
+
 
         }
+        //public void ApagarPartida()
+        //{
+           // Partidas.RemoveAt(0);
+         //   Partidas.Clear();
+
+       // }
         private async Task Update()
         {
             while (IsRunning)
@@ -249,11 +405,34 @@ namespace ChatterClient
                 if (packet is PartidasPacket playP)
                 {
                     Partidas.Add(playP);
+                    
+
 
                 }
 
+                if (packet is Partida playP2)
+                {
+                    //MessageBox.Show(playP2.Jogo);
+                    DbPartidas.Add(playP2);
+                    foreach (var jogadores in playP2.Jogadores)
+                    {
+                        DbJogadores.Add(jogadores[0]+" - "+ jogadores[1]) ;
+                    }
 
-                if (packet is UserConnectionPacket connectionP)
+                }
+                if (packet is RemoverPartida playRemover)
+                {
+                   
+
+
+                   
+                    //MessageBox.Show(DbPartidas.IndexOf(partida).ToString());
+                    DbPartidas.Clear();
+                    DbJogadores.Clear();
+                    GetPartidas();
+                    GetJogadores(playRemover.Nome);
+                }
+                    if (packet is UserConnectionPacket connectionP)
                 {
                     Users.Clear();
                     foreach (var user in connectionP.Users)

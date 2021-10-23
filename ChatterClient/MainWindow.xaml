@@ -35,9 +35,11 @@
             <StackPanel Margin="5,0,5,0">
                 <Label DockPanel.Dock="Top" Content="Partida Atual" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Height="24" />
                 <ContentControl    Height="156" HorizontalAlignment="Stretch">
-                    <ListView x:Name="tayres"  DockPanel.Dock="Bottom" ItemsSource="{Binding ChatRoom.Partidas[0].Jogadores}" BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12"/>
+                    <ListView x:Name="tayres"  DockPanel.Dock="Bottom"  d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}" 
+            ItemsSource="{Binding ChatRoom.DbJogadores}" BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12"/>
 
                 </ContentControl>
+
             </StackPanel>
 
         </DockPanel>
@@ -47,7 +49,7 @@
 
                 <ContentControl    Height="156" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                     <ListView x:Name="lista_partidas"  d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}" 
-            ItemsSource="{Binding DbPartidas}" DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12">
+            ItemsSource="{Binding ChatRoom.DbPartidas}" DockPanel.Dock="Bottom"  BorderThickness="0,0,0,0" Grid.Column="1" FontSize="12">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Titulo}"/>
@@ -180,7 +182,7 @@
                     <ComboBoxItem Content="Público BR"/>
                     <ComboBoxItem Content="Localhost(VPN)"/>
                 </ComboBox>
-                <Button Content="JOGAR Teste"  Height="27"  FontSize="12" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" Click="Button_Click_3" />
+                <Button Content="JOGAR Teste" Command="{Binding SendPartida}"  Height="27"  FontSize="12" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" Click="Button_Click_3" />
 
                 <Button Content="JOGAR" Command="{Binding SendPartida}" Height="27"  FontSize="12" Click="Button_Click" VerticalAlignment="Top" Margin="0,20,0,0" Width="100" />
                 <StackPanel 

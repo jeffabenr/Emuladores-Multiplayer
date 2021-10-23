@@ -108,10 +108,23 @@ namespace ChatterClient
             }
         }
 
-        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            e.Cancel = true;
             var context = (MainWindowViewModel)DataContext;
-            context.DisconnectCommand.Execute(null);
+            if (context.Partida_Key!=null) {
+           await FBClient
+                           .Child("Partidas")
+                           .Child(context.Partida_Key)
+                           .DeleteAsync();
+
+
+               
+                context.ApagarPartida.Execute(null);
+                context.DisconnectCommand.Execute(null);
+            }
+            Application.Current.Shutdown();
+
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -1038,14 +1051,15 @@ namespace ChatterClient
             {
                 string nome = e.Object.Nome;
                 string senha = e.Object.Senha;
-
+                string key = e.Key;
                 if (login_nome.Text == nome && login_senha.Password == senha)
                 {
 
                     //MessageBox.Show("Logado! "+nome + " " + senha);
                     var context = (MainWindowViewModel)DataContext;
+                    context.Key = key;
                     context.ConnectCommand.Execute(null);
-
+                    //MessageBox.Show(key);
                     //DisconnectCommand.Execute(null);
                 }
                 else
@@ -1070,17 +1084,31 @@ namespace ChatterClient
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
 
-            //criarPartida.Visibility = Visibility.Visible;
-            AdicionarPartida();
-        }
-
-        private void MetroWindow_Closed(object sender, EventArgs e)
-        {
-            var context = (MainWindowViewModel)DataContext;
-            context.DisconnectCommand.Execute(null);
+            criarPartida.Visibility = Visibility.Visible;
            
         }
 
+        private async void MetroWindow_Closed(object sender, EventArgs e)
+        {
+            var context = (MainWindowViewModel)DataContext;
+            //context.ApagarPartida.Execute(null);
+            context.DisconnectCommand.Execute(null);
+           
+            KillProcess("Mednafen");
+            
+
+
+
+        }
+        public void KillProcess(string Name)
+        {
+            Process[] process = Process.GetProcessesByName(Name);
+            foreach (var proc in process)
+            {
+                if (!proc.HasExited)
+                    proc.Kill();
+            }
+        }
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (lista_partidas.HasItems && lista_partidas.SelectedIndex>=0) {
@@ -1110,6 +1138,7 @@ namespace ChatterClient
         private async void Button_Click_3(object sender, RoutedEventArgs e)
         {
             await CriarPartida();
+          
         }
         public async Task EntrarPartida(string nome, string host)
         {
@@ -1168,24 +1197,17 @@ namespace ChatterClient
                     myProcess.StartInfo.FileName = NullDCPath + @"\mednafen\mednafen.exe";
                     //myProcess.StartInfo.Verb = "Print";
                     string GameKey = " -netplay.gamekey \"\"";
-                    //myProcess.Arguments = " -connect -netplay.host " + "\"emuladores-br.ddns.net\"" + GameKey + " -netplay.nick \"Abner" + "\" ";
-                    //myProcess.Arguments += "\"" + NullDCPath + @"\jogos\snes\Super Bomberman 4 (Japan).sfc" + "\"";
-                    //Console.WriteLine("Comando: " + MednafenInfo.Arguments);
-                   // myProcess.StartInfo.CreateNoWindow = true;
-                    //myProcess.EnableRaisingEvents = true;
-                    // myProcess.Exited += new EventHandler(MednafenInstance_Exited);
-                    
-                       
+           
                     myProcess.StartInfo.Arguments = " -connect -netplay.host " + "\"emuladores-br.ddns.net\"" + GameKey + " -netplay.nick \"Abner" + "\" ";
                     myProcess.StartInfo.Arguments += "\"" + NullDCPath + @"\jogos\snes\Super Bomberman 4 (Japan).sfc" + "\"";
 
 
 
                      
-                    //myProcess.Start();
-                  //  Process correctionProcess = Process.Start(myProcess.StartInfo);
-                   // correctionProcess.EnableRaisingEvents = true;
-                   // correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
+                 
+                    Process correctionProcess = Process.Start(myProcess.StartInfo);
+                    correctionProcess.EnableRaisingEvents = true;
+                    correctionProcess.Exited += new EventHandler(MednafenInstance_Exited_Host);
                     var context = (MainWindowViewModel)DataContext;
                     context.SendPartida.Execute(null);
                 
@@ -1201,8 +1223,48 @@ namespace ChatterClient
                     //MessageBox.Show("Usuário:" + drv.Username + " Jogo:" + drv.Jogo + " Emulador:" + drv.Emulador.Trim() + " IP:" + drv.Ip.Trim() + " Jogadores:" + drv.Jogadores[0].Trim());
                     
                     criarPartida.Visibility = Visibility.Hidden;
-                   
-                }
+
+
+                  
+
+                    // var temp = await FBClient
+                    //  .Child("Partidas")
+                    //  .OrderByKey()
+                    // .OnceAsync<Partida>();
+                    string[][] Jogadores = new string[][] {
+                    new string[] {"Host", context.Username }
+            };
+                    Partida partida = new Partida();
+
+
+                    partida.Nome = "Abner";
+                    partida.Jogo = "Super Bomberman 4";
+                    partida.Emulador = "Super Nintendo";
+                    partida.Engine = "Mednafem";
+                    partida.TipoServidor = "Público";
+                    partida.Jogadores = Jogadores;
+                    partida.Ip = "emuladores-br.ddns.net";
+                    partida.Titulo = "Host:" + partida.Nome + " Jogo:" + partida.Emulador + " Jogadores:" + 1 + "/5  Servidor:" + partida.TipoServidor + "  Engine:" + partida.Engine;
+
+                    await FBClient
+                                    .Child("Partidas")
+                                    .PostAsync(partida, false);
+
+                    var temp = await FBClient
+               .Child("Partidas")
+               .OnceAsync<Partida>();
+                    foreach (var j in temp)
+                    {
+                        if (j.Object.Nome == context.Username)
+                        {
+                            context.Partida_Key = j.Key;
+                        }
+                    }
+
+                   // MessageBox.Show(context.Partida_Key);
+
+
+                        }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Emulador não encontrado! Erro:" + ex.Message);
@@ -1221,14 +1283,56 @@ namespace ChatterClient
 
             tayres.ItemsSource = drv.Jogadores;
         }
+        private async void MednafenInstance_Exited_Host(object sender, EventArgs e)
+        {
+            
 
+            await App.Current.Dispatcher.BeginInvoke((Action)async delegate ()
+            {
+
+                var context = (MainWindowViewModel)DataContext;
+                var temp = await FBClient
+               .Child("Partidas")
+               .OrderByKey()
+               .OnceAsync<Partida>();
+
+                //MessageBox.Show(temp.Count.ToString()) ; 
+                foreach (var j in temp)
+                {
+                    if (j.Object.Nome== context.Username)
+                    {
+                        //string nome = j.Object.Nome;
+                        //string senha = j.Object.Senha;
+                        // string key = j.Key;
+                        //if (login_nome.Text == nome && login_senha.Password == senha)
+                        // {
+                        //MessageBox.Show(j.Key);
+                        //MessageBox.Show("Logado! "+nome + " " + senha);
+                        await FBClient
+                         .Child("Partidas")
+                         .Child(j.Key)
+                         .DeleteAsync();
+                       context.ApagarPartida.Execute(null);
+                    }
+
+                }
+
+
+
+            });
+        }
 
         private void MednafenInstance_Exited(object sender, System.EventArgs e)
         {
-           // MessageBox.Show("Fechou");
+
+            MessageBox.Show("Fechou");
         }
-        
-            private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void DeleteUser()
+        {
+            
+        }
+
+        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
             criarPartida.Visibility = Visibility.Hidden;
         }
@@ -1287,38 +1391,7 @@ namespace ChatterClient
             }
         }
 
-        private async void AdicionarPartida()
-        {
-            
-
-               // var temp = await FBClient
-                  //  .Child("Partidas")
-                  //  .OrderByKey()
-                   // .OnceAsync<Partida>();
-
-            Partida partida = new Partida();
-
-
-            partida.Nome ="Abner";
-            partida.Jogo ="Super Bomberman 4";
-            partida.Emulador = "Super Nintendo";
-            partida.Engine = "Mednafem";
-            partida.TipoServidor = "Público";
-            partida.Ip = "emuladores-br.ddns.net";
-            partida.Titulo = "Host:" + partida.Nome + " Jogo:" + partida.Emulador + " Jogadores:" + 1 + "/5  Servidor:" + partida.TipoServidor + "  Engine:" + partida.Engine;
-
-            await FBClient
-                            .Child("Partidas")
-                            .PostAsync(partida, false);
-                       
-                   
-                
-
-
-
-
-            
-        }
+       
 
     }
 }
