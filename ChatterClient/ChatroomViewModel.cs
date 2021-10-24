@@ -371,7 +371,7 @@ GetPartidas()
                         Thread.Sleep(5000);
 
                         if (_pinged)
-                            Task.Run(() => Disconnect());
+                            await Task.Run(() => Disconnect());
                     }
                 }
                 else
@@ -393,7 +393,7 @@ GetPartidas()
             return false;
         }
 
-        private bool ManagePacket(object packet)
+        private  bool ManagePacket(object packet)
         {
             if (packet != null)
             {
@@ -404,6 +404,7 @@ GetPartidas()
                 }
                 if (packet is PartidasPacket playP)
                 {
+                    if(playP.Nome!="Servidor")
                     Partidas.Add(playP);
                     
 

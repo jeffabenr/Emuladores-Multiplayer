@@ -50,6 +50,16 @@ namespace ChatterClient
             get { return _partida_key; }
             set { OnPropertyChanged(ref _partida_key, value); }
         }
+
+        private System.Diagnostics.Process _processo;
+        public System.Diagnostics.Process Processo
+        {
+            get { return _processo; }
+            set { OnPropertyChanged(ref _processo, value); }
+        }
+
+
+       
         private object[] _jogadores;
         public object[] Jogadores
         {
@@ -135,8 +145,8 @@ namespace ChatterClient
 
 
             ChatRoom = new ChatroomViewModel();
-            string url = "127.0.0.1";
-            //string url = "emuladores-br.ddns.net";
+            //string url = "127.0.0.1";
+             string url = "emuladores-br.ddns.net";
             Port = "8000";
             int socketPort = 0;
             var validPort = int.TryParse(Port, out socketPort);

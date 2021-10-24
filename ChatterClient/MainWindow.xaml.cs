@@ -25,6 +25,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Firebase.Database;
 using Firebase.Database.Query;
+using System.Timers;
 
 namespace ChatterClient
 {
@@ -42,7 +43,7 @@ namespace ChatterClient
         private bool needsUpdate = false;
         public string NullDCPath = Directory.GetCurrentDirectory();
         public Configs ConfigFile;
-       
+        System.Timers.Timer timer = new System.Timers.Timer();
         public Process MednafenInstance = null;
         public MainWindow()
         {
@@ -1040,12 +1041,16 @@ namespace ChatterClient
         }
 
 
-        public async void GetJogadores()
+        public async Task GetJogadores()
         {
+            var context = (MainWindowViewModel)DataContext;
             var temp = await FBClient
                 .Child("Jogadores")
-                .OrderByKey()
+                .OrderBy("Nome")
+                .EqualTo(login_nome.Text)
+                .LimitToFirst(1)
                 .OnceAsync<Usuario>();
+            
 
             foreach (var e in temp)
             {
@@ -1056,28 +1061,41 @@ namespace ChatterClient
                 {
 
                     //MessageBox.Show("Logado! "+nome + " " + senha);
-                    var context = (MainWindowViewModel)DataContext;
+                  
                     context.Key = key;
                     context.ConnectCommand.Execute(null);
                     //MessageBox.Show(key);
                     //DisconnectCommand.Execute(null);
+                    return;
                 }
                 else
                 {
-                    MessageBox.Show("Jogador não encontrado!!!");
+                   
                 }
             }
-
+            MessageBox.Show("Jogador não encontrado!!!");
+            conectar.IsEnabled = true;
+            status.Content = "Desconectado";
         }
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(login_nome.Text) || string.IsNullOrEmpty(login_senha.Password))
-                MessageBox.Show("Coloque o nome e a senha!");
-            else
-            GetJogadores();
+            { MessageBox.Show("Coloque o nome e a senha!"); return; }
             
-            // if(nome.Text != "")
-            // status.Content = "Conectando";
+            else
+            {
+                status.Content = "Conectando";
+                conectar.IsEnabled = false;
+            }
+               
+
+
+           
+            
+            await GetJogadores();
+            
+            
+           
             //MessageBox.Show("conectar");
         }
 
@@ -1137,7 +1155,7 @@ namespace ChatterClient
 
         private async void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            await CriarPartida();
+             CriarPartida();
           
         }
         public async Task EntrarPartida(string nome, string host)
@@ -1165,12 +1183,14 @@ namespace ChatterClient
                     Process correctionProcess = Process.Start(myProcess.StartInfo);
                     correctionProcess.EnableRaisingEvents = true;
                     correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
-
+                    
+                    
+                   
                     // var context2 = (MainWindowViewModel)DataContext;
                     //context2.ChatRoom.Partidas[0].Jogadores.Append("abner2");
 
-                   // var context = (MainWindowViewModel)DataContext;
-                   // context.ApagarPartida.Execute(null);
+                    // var context = (MainWindowViewModel)DataContext;
+                    // context.ApagarPartida.Execute(null);
 
 
                 }
@@ -1184,7 +1204,54 @@ namespace ChatterClient
             }
 
         }
-        public async Task CriarPartida()
+        private async void Time_Elapsed(object sender, ElapsedEventArgs e)
+        {
+           await App.Current.Dispatcher.BeginInvoke((Action)async delegate ()
+            {  
+            var context = (MainWindowViewModel)DataContext;
+            //MessageBox.Show(context.Processo.Id.ToString()) ;
+                 if (context.Processo.HasExited && timer.Enabled)
+                {
+                    timer.Enabled = false;
+                    await App.Current.Dispatcher.BeginInvoke((Action)async delegate ()
+                    {
+
+                     
+                        var temp = await FBClient
+                       .Child("Partidas")
+                       .OrderBy("Nome")
+                       .EqualTo(context.Username)
+                       .OnceAsync<Partida>();
+
+                        //MessageBox.Show(temp.Count.ToString()) ; 
+                        foreach (var j in temp)
+                        {
+                            
+                                //string nome = j.Object.Nome;
+                                //string senha = j.Object.Senha;
+                                // string key = j.Key;
+                                //if (login_nome.Text == nome && login_senha.Password == senha)
+                                // {
+                                //MessageBox.Show(j.Key);
+                                //MessageBox.Show("Logado! "+nome + " " + senha);
+                                await FBClient
+                                 .Child("Partidas")
+                                 .Child(j.Key)
+                                 .DeleteAsync();
+                                context.ApagarPartida.Execute(null);
+                            
+
+                        }
+
+
+
+                    });
+
+                }
+
+            });
+        }
+        public async void CriarPartida()
         {
             Process myProcess;
             
@@ -1210,8 +1277,12 @@ namespace ChatterClient
                     correctionProcess.Exited += new EventHandler(MednafenInstance_Exited_Host);
                     var context = (MainWindowViewModel)DataContext;
                     context.SendPartida.Execute(null);
-                
-
+                    context.Processo = correctionProcess;
+                   // MessageBox.Show(correctionProcess.Id.ToString()) ;
+                    
+                    timer.Interval = 1000; //1000 milésimos = 1 segundo
+                    timer.Enabled = true;
+                    timer.Elapsed += new ElapsedEventHandler(Time_Elapsed);
 
 
                     //var context2 = (PartidasPacket)context.ChatRoom.Partidas.GetEnumerator().Current;
@@ -1221,7 +1292,7 @@ namespace ChatterClient
 
                     //MessageBox.Show("Usuário:"+ drv.Username+ " Jogo:" + drv.Jogo + " Emulador:" + drv.Emulador + " Servidor:" + drv.TipoServidor + " Ip:" + drv.Ip + " Engine:" + drv.Engine);
                     //MessageBox.Show("Usuário:" + drv.Username + " Jogo:" + drv.Jogo + " Emulador:" + drv.Emulador.Trim() + " IP:" + drv.Ip.Trim() + " Jogadores:" + drv.Jogadores[0].Trim());
-                    
+
                     criarPartida.Visibility = Visibility.Hidden;
 
 
@@ -1246,19 +1317,20 @@ namespace ChatterClient
                     partida.Ip = "emuladores-br.ddns.net";
                     partida.Titulo = "Host:" + partida.Nome + " Jogo:" + partida.Emulador + " Jogadores:" + 1 + "/5  Servidor:" + partida.TipoServidor + "  Engine:" + partida.Engine;
 
-                    await FBClient
+                   await  FBClient
                                     .Child("Partidas")
                                     .PostAsync(partida, false);
 
                     var temp = await FBClient
                .Child("Partidas")
+               .OrderBy("Nome")
+               .EqualTo(context.Username)
                .OnceAsync<Partida>();
                     foreach (var j in temp)
                     {
-                        if (j.Object.Nome == context.Username)
-                        {
+                        
                             context.Partida_Key = j.Key;
-                        }
+                        
                     }
 
                    // MessageBox.Show(context.Partida_Key);
@@ -1293,14 +1365,14 @@ namespace ChatterClient
                 var context = (MainWindowViewModel)DataContext;
                 var temp = await FBClient
                .Child("Partidas")
-               .OrderByKey()
+               .OrderBy("Nome")
+                .EqualTo(context.Username)
                .OnceAsync<Partida>();
 
                 //MessageBox.Show(temp.Count.ToString()) ; 
                 foreach (var j in temp)
                 {
-                    if (j.Object.Nome== context.Username)
-                    {
+                    
                         //string nome = j.Object.Nome;
                         //string senha = j.Object.Senha;
                         // string key = j.Key;
@@ -1313,7 +1385,7 @@ namespace ChatterClient
                          .Child(j.Key)
                          .DeleteAsync();
                        context.ApagarPartida.Execute(null);
-                    }
+                    
 
                 }
 
@@ -1337,9 +1409,10 @@ namespace ChatterClient
             criarPartida.Visibility = Visibility.Hidden;
         }
 
-        private void Button_Click_4(object sender, RoutedEventArgs e)
+        private async void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            AdicionarJogador();
+            cadastrar.IsEnabled = false;
+          await  AdicionarJogador();
            // MessageBox.Show("Cadastrar");
         }
         private readonly FirebaseClient _fbClient = new FirebaseClient("https://emuladoresbr-94d9d-default-rtdb.firebaseio.com/");
@@ -1348,45 +1421,44 @@ namespace ChatterClient
             get { return _fbClient; }
         }
 
-        private async void AdicionarJogador()
+        private async Task AdicionarJogador()
         {
             if (string.IsNullOrEmpty(cadastrar_nome.Text) || string.IsNullOrEmpty(cadastrar_senha.Password))
-                MessageBox.Show("Coloque o nome e a senha!");
+            { MessageBox.Show("Coloque o nome e a senha!"); cadastrar.IsEnabled = true;return; }
             else
             {
 
                 var temp = await FBClient
                     .Child("Jogadores")
-                    .OrderByKey()
+                    .OrderBy("Nome")
+                       .EqualTo(cadastrar_nome.Text)
                     .OnceAsync<Usuario>();
 
-                foreach (var e in temp)
+
+                if (temp.Count > 0)
                 {
-                    string nome = e.Object.Nome;
-                    //string senha = e.Object.Senha;
 
-                    if (cadastrar_nome.Text == nome )
-                    {
-
-                        MessageBox.Show("Jogador já cadastrado!!!");
-                    }
-                    else
-                    {
-                        Usuario usuario = new Usuario();
+                    MessageBox.Show("Jogador já cadastrado!!!");
+                    cadastrar.IsEnabled = true;
+                }
+                else
+                {
+                    Usuario usuario = new Usuario();
 
 
-                        usuario.Nome = cadastrar_nome.Text;
-                        usuario.Senha = cadastrar_senha.Password;
+                    usuario.Nome = cadastrar_nome.Text;
+                    usuario.Senha = cadastrar_senha.Password;
 
-                        await FBClient
-                            .Child("Jogadores")
-                            .PostAsync(usuario, false);
-                        MessageBox.Show("Jogador Cadastrado com Sucesso!");
-                    }
+                    await FBClient
+                        .Child("Jogadores")
+                        .PostAsync(usuario, false);
+                    MessageBox.Show("Jogador Cadastrado com Sucesso!");
+                    cadastrar.IsEnabled = true;
                 }
 
 
-                
+
+
 
             }
         }
