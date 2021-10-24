@@ -145,8 +145,8 @@ namespace ChatterClient
 
 
             ChatRoom = new ChatroomViewModel();
-            //string url = "127.0.0.1";
-             string url = "emuladores-br.ddns.net";
+            string url = "127.0.0.1";
+            // string url = "emuladores-br.ddns.net";
             Port = "8000";
             int socketPort = 0;
             var validPort = int.TryParse(Port, out socketPort);
