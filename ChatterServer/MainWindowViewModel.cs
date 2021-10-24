@@ -181,10 +181,10 @@ namespace ChatterServer
                 {
                     
                     Username = "Servidor",
-                    Message = "Um novo usuário:"+ ucp.Username + " entrou no chat",
+                    Message = "Um novo usuário: "+ ucp.Username + " entrou no chat",
                     UserColor = Colors.Purple.ToString()
                 };
-                string[][] Jogadores = new string[][] {
+               /* string[][] Jogadores = new string[][] {
                     new string[] {"Host", "Servidor" } };
                 var notification2 = new Partida
                 {
@@ -227,7 +227,7 @@ namespace ChatterServer
 
 
                 };
-
+               */
                 if (Usernames.Keys.Contains(ucp.UserGuid))
                     Usernames.Remove(ucp.UserGuid);
                 else
@@ -238,9 +238,9 @@ namespace ChatterServer
                 Task.Run(() => _server.SendObjectToClients(ucp)).Wait();
                 Thread.Sleep(500);
                 Task.Run(() => _server.SendObjectToClients(notification)).Wait();
-                Task.Run(() => _server.SendObjectToClients(notification2)).Wait();
-                Task.Run(() => _server.SendObjectToClients(notification3)).Wait();
-                Task.Run(() => _server.SendObjectToClients(notification4)).Wait();
+                //Task.Run(() => _server.SendObjectToClients(notification2)).Wait();
+                //Task.Run(() => _server.SendObjectToClients(notification3)).Wait();
+                //Task.Run(() => _server.SendObjectToClients(notification4)).Wait();
             }
             WriteOutput("Pacote Pessoal Recebido");
         }
@@ -261,7 +261,7 @@ namespace ChatterServer
             var notification = new ChatPacket
             {
                 Username = "Servidor",
-                Message = "Um usuário saiu do chat",
+                Message = Usernames[e.Sender.ClientId.ToString()] + " saiu do chat",
                 UserColor = Colors.Purple.ToString()
             };
             var userPacket = new UserConnectionPacket

@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SimpleTcp
 {
@@ -177,8 +178,9 @@ namespace SimpleTcp
                 Socket.Connect(EndPoint);
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show("Erro em conectar! \n Servidor poder está desligado!");
                 Console.WriteLine("Connection failed.");
                 return false;
             }

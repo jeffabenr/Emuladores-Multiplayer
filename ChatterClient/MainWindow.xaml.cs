@@ -130,7 +130,8 @@ namespace ChatterClient
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-           
+            var context = (MainWindowViewModel)DataContext;
+            context.ChatRoom.Logar = true;
             CriarPasta(NullDCPath + @"\jogos\snes\");
             if (NullDCPath.ToLower().Contains("system32"))
             {
@@ -1074,18 +1075,21 @@ namespace ChatterClient
                 }
             }
             MessageBox.Show("Jogador não encontrado!!!");
-            conectar.IsEnabled = true;
+            context.ChatRoom.Logar = true;
             status.Content = "Desconectado";
         }
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            var context = (MainWindowViewModel)DataContext;
+
             if (string.IsNullOrEmpty(login_nome.Text) || string.IsNullOrEmpty(login_senha.Password))
             { MessageBox.Show("Coloque o nome e a senha!"); return; }
             
             else
             {
                 status.Content = "Conectando";
-                conectar.IsEnabled = false;
+                context.ChatRoom.Logar = false;
+                //conectar.IsEnabled = false;
             }
                
 
@@ -1308,7 +1312,7 @@ namespace ChatterClient
                     Partida partida = new Partida();
 
 
-                    partida.Nome = "Abner";
+                    partida.Nome = context.Username;
                     partida.Jogo = "Super Bomberman 4";
                     partida.Emulador = "Super Nintendo";
                     partida.Engine = "Mednafem";

@@ -66,7 +66,12 @@ namespace ChatterClient
             get { return _isRunning; }
             set { OnPropertyChanged(ref _isRunning, value); }
         }
-
+        private bool _logar;
+        public bool Logar
+        {
+            get { return _logar; }
+            set { OnPropertyChanged(ref _logar, value); }
+        }
         private SimpleClient _client;
 
         private Task<bool> _listenTask;
@@ -76,7 +81,7 @@ namespace ChatterClient
         private DateTime _pingSent;
         private DateTime _pingLastSent;
         private bool _pinged = false;
-        
+       
 
         public ChatroomViewModel()
         {
@@ -99,7 +104,7 @@ namespace ChatterClient
         private async Task InitializeConnection(PersonalPacket connectionPacket)
         {
             _pinged = false;
-
+           
             if (IsRunning)
             {
                 _updateTask = Task.Run(() => Update());
@@ -110,8 +115,10 @@ namespace ChatterClient
             }
             else
             {
+               
                 Status = "Conexão falhou";
                 await Disconnect();
+                Logar = true;
             }
         }
 
@@ -158,6 +165,7 @@ namespace ChatterClient
 
             App.Current.Dispatcher.Invoke(delegate
             {
+                //Logar = true;
                 Messages.Add(new ChatPacket
                 {
                     Username = string.Empty,
