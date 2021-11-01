@@ -1110,14 +1110,14 @@ namespace ChatterClient
            
         }
 
-        private async void MetroWindow_Closed(object sender, EventArgs e)
+        private void MetroWindow_Closed(object sender, EventArgs e)
         {
             var context = (MainWindowViewModel)DataContext;
             //context.ApagarPartida.Execute(null);
             context.DisconnectCommand.Execute(null);
            
             KillProcess("Mednafen");
-            
+            KillProcess("Controle");
 
 
 
@@ -1167,7 +1167,7 @@ namespace ChatterClient
             Process myProcess;
 
 
-            using (myProcess = new Process())
+           using (myProcess = new Process())
             {
                 try
                 {
@@ -1467,7 +1467,77 @@ namespace ChatterClient
             }
         }
 
-       
+        private async void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var context = (MainWindowViewModel)DataContext;
+            if (context.Partida_Key != null)
+            {
+                await FBClient
+                                .Child("Partidas")
+                                .Child(context.Partida_Key)
+                                .DeleteAsync();
 
+
+
+                context.ApagarPartida.Execute(null);
+                context.DisconnectCommand.Execute(null);
+            }
+            Application.Current.Shutdown();
+
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+           KillProcess("Mednafen");
+            var context = (MainWindowViewModel)DataContext;
+            //context.ApagarPartida.Execute(null);
+            context.DisconnectCommand.Execute(null);
+
+           
+
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            Process myProcess;
+
+
+            using (myProcess = new Process())
+            {
+                try
+                {
+                    // Start a process to print a file and raise an event when done.
+                    myProcess.StartInfo.FileName = NullDCPath + @"\Controle.exe";
+                    //myProcess.StartInfo.Verb = "Print";
+                   
+
+
+
+                   
+
+
+                    Process correctionProcess = Process.Start(myProcess.StartInfo);
+                    correctionProcess.EnableRaisingEvents = true;
+                    //correctionProcess.Exited += new EventHandler(MednafenInstance_Exited);
+
+
+
+                    // var context2 = (MainWindowViewModel)DataContext;
+                    //context2.ChatRoom.Partidas[0].Jogadores.Append("abner2");
+
+                    // var context = (MainWindowViewModel)DataContext;
+                    // context.ApagarPartida.Execute(null);
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Emulador não encontrado! Erro:" + ex.Message);
+                }
+
+                // Wait for Exited event, but not more than 30 seconds.
+
+            }
+        }
     }
 }

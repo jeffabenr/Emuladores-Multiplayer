@@ -29,14 +29,16 @@
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
 
+
+
         <DockPanel Height="27" VerticalAlignment="Top" Grid.ColumnSpan="4" >
             <Menu DockPanel.Dock="Top" >
                 <MenuItem Header="_Arquivo" FontSize="12">
-                    <MenuItem Header="_Desconectar" />
+                    <MenuItem Header="_Desconectar" Click="MenuItem_Click_1" />
                     <Separator />
-                    <MenuItem Header="_Sair" />
+                    <MenuItem Header="_Sair" Click="MenuItem_Click" />
                 </MenuItem>
-                <MenuItem Header="_Controles" FontSize="12"/>
+                <MenuItem Header="_Controles" FontSize="12" Click="MenuItem_Click_2"/>
                 <MenuItem Header="_Gráficos" FontSize="12"/>
                 <MenuItem Header="_Sobre" FontSize="12"/>
             </Menu>

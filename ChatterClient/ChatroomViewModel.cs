@@ -165,7 +165,7 @@ namespace ChatterClient
 
             App.Current.Dispatcher.Invoke(delegate
             {
-                //Logar = true;
+                Logar = true;
                 Messages.Add(new ChatPacket
                 {
                     Username = string.Empty,
